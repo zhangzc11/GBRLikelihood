@@ -1,4 +1,10 @@
-root -l eregtrainingExample_13TeV_Pi0.C+(false,false)
-root -l eregtrainingExample_13TeV_Pi0.C+(true,false)
-root -l eregtestingExample_13TeV_Pi0.C+(false,false)
-root -l eregtestingExample_13TeV_Pi0.C+(true,false)
+date
+root -q -l -b eregtraining_13TeV_Pi0.C+(false,false,false)
+root -q -l -b eregtraining_13TeV_Pi0.C+(true,false,false)
+root -q -l -b eregtesting_13TeV_Pi0.C+(false,false,false)
+root -q -l -b eregtesting_13TeV_Pi0.C+(true,false,false)
+root -q -l -b eregtraining_13TeV_Pi0.C+(false,false,true)
+root -q -l -b eregtraining_13TeV_Pi0.C+(true,false,true)
+root -q -l -b eregtesting_13TeV_Pi0.C+(false,false,true)
+root -q -l -b eregtesting_13TeV_Pi0.C+(true,false,true)
+date
