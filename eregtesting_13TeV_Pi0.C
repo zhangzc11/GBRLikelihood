@@ -341,11 +341,18 @@ TCut selcut;
   printf("make fine histogram\n");
   TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(20e3,0.,2.));
 
+  std::cout<<gamma1or2<<"_"<<EEorEB<<std::endl;
   printf("calc effsigma\n");
   
-  double effsigma = effSigma(hecorfine);
+  double effsigma_cor = effSigma(hecorfine);
   
-  printf("effsigma = %5f\n",effsigma);
+  printf("effsigma of corrected curve = %5f\n",effsigma_cor);
+
+  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(20e3,0.,2.));
+
+  double effsigma_raw = effSigma(herawfine);
+
+  printf("effsigma of raw curve = %5f\n",effsigma_raw);
   
 /*  new TCanvas;
   RooPlot *ploteold = testvar.frame(0.6,1.2,100);
