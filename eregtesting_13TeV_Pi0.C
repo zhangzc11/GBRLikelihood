@@ -341,8 +341,9 @@ TCut selcut;
   printf("make fine histogram\n");
   TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(20e3,0.,2.));
 
-  std::cout<<gamma1or2<<"_"<<EEorEB<<std::endl;
   printf("calc effsigma\n");
+  
+  std::cout<<gamma1or2<<"_"<<EEorEB<<std::endl;
   
   double effsigma_cor = effSigma(hecorfine);
   
