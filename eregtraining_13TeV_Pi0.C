@@ -321,7 +321,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
   TCut evenevents = "(Entry$%2==0)";
   TCut oddevents = "(Entry$%2==1)";  
 
-  weightvar.SetTitle(prescale100*evenevents*selcut);
+  weightvar.SetTitle(evenevents*selcut);
 
   //weightvar title used for per-event weights and selection cuts
 /////////////////////////////////zzc, no evt in current tree//////////
