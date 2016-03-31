@@ -134,7 +134,8 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
    	//common for EE and EB
     	varsf->push_back("STr2_enG1_nocor");// /cosh(STr2_Eta_1)");
     	varsf->push_back("STr2_Nxtal_1");
-//    	varsf->push_back("STr2_Nxtal_2");
+    	
+    	varsf->push_back("STr2_Nxtal_2");
     	varsf->push_back("STr2_S4S9_1");
    	varsf->push_back("STr2_S1S9_1");
    	varsf->push_back("STr2_S2S9_1");
@@ -145,8 +146,9 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
         //EE
 	varsee->push_back("STr2_iEtaiX_1");
    	varsee->push_back("STr2_iPhiiY_1");
-	varseb->push_back("STr2_Eta_1");
-
+	varsee->push_back("STr2_Eta_1");
+	varsee->push_back("STr2_Es_e1_1");
+    	varsee->push_back("STr2_Es_e2_1");
    	//EB
 	varseb->push_back("STr2_Eta_1");
    	varseb->push_back("STr2_Phi_1");
@@ -159,7 +161,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
 	{
    	//common for EE and EB
 	varsf->push_back("STr2_enG2_nocor");// /cosh(STr2_Eta_1)");
-  //  	varsf->push_back("STr2_Nxtal_1");
+    	varsf->push_back("STr2_Nxtal_1");
     	varsf->push_back("STr2_Nxtal_2");
     	varsf->push_back("STr2_S4S9_2");
    	varsf->push_back("STr2_S1S9_2");
@@ -171,8 +173,9 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
         //EE
 	varsee->push_back("STr2_iEtaiX_2");
    	varsee->push_back("STr2_iPhiiY_2");
-	varseb->push_back("STr2_Eta_2");
-
+	varsee->push_back("STr2_Eta_2");
+	varsee->push_back("STr2_Es_e1_2");
+    	varsee->push_back("STr2_Es_e2_2");
    	//EB
 	varseb->push_back("STr2_Eta_2");
    	varseb->push_back("STr2_Phi_2");

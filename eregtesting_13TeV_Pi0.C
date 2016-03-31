@@ -325,7 +325,7 @@ TCut selcut;
   hecor->SetLineColor(kBlue);
   heraw->SetLineColor(kMagenta);
   
-  hecor->GetXaxis()->SetRangeUser(0.6,1.2);
+  hecor->GetXaxis()->SetRangeUser(0.6,10);
   //heold->GetXaxis()->SetRangeUser(0.6,1.2);
   
   TCanvas *cresponse = new TCanvas;
