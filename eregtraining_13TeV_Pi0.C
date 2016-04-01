@@ -321,7 +321,8 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
   TCut evenevents = "(Entry$%2==0)";
   TCut oddevents = "(Entry$%2==1)";  
 
-  TCut Events3_4 = "((Entry$%4==0)||(Entry$%4==1)||(Entry$%4==2))"
+  TCut Events3_4 = "((Entry$%4==0)||(Entry$%4==1)||(Entry$%4==2))";
+  
   weightvar.SetTitle(Events3_4*selcut);
 
   //weightvar title used for per-event weights and selection cuts
