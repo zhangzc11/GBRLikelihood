@@ -39,6 +39,7 @@
 #include "RooAddition.h"
 #include "TSystem.h"
 #include "RooLinearVar.h"
+#include <TStyle.h>
 
 
 using namespace RooFit;
@@ -327,32 +328,38 @@ TCut selcut;
   
   hecor->GetXaxis()->SetRangeUser(0.6,10);
   //heold->GetXaxis()->SetRangeUser(0.6,1.2);
+
+  TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(20e3,0.,2.));
+  double effsigma_cor = effSigma(hecorfine);
+  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(20e3,0.,2.));
+  double effsigma_raw = effSigma(herawfine);
   
+
   TCanvas *cresponse = new TCanvas;
-  
+  gStyle->SetOptStat(0); 
+  hecor->SetTitle("");
+  heraw->SetTitle("");
   hecor->Draw("HIST");
   //heold->Draw("HISTSAME");
   heraw->Draw("HISTSAME");
+
+  //show errSigma in the plot
+  TLegend *leg = new TLegend(0.4, 0.75, 0.8, 0.9);
+  leg->AddEntry(hecor,Form("E_{cor}/E_{true}, #sigma_{eff}=%4.3f", effsigma_cor),"l");
+  leg->AddEntry(heraw,Form("E_{raw}/E_{true}, #sigma_{eff}=%4.3f", effsigma_raw),"l");
+  leg->SetFillStyle(0);
+  leg->SetBorderSize(0);
+ // leg->SetTextColor(kRed);
+  leg->Draw();
+
   cresponse->SaveAs("response.eps");
   cresponse->SetLogy();
   cresponse->SaveAs("responselog.eps");
   
   
-  printf("make fine histogram\n");
-  TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(20e3,0.,2.));
-
   printf("calc effsigma\n");
-  
   std::cout<<gamma1or2<<"_"<<EEorEB<<std::endl;
-  
-  double effsigma_cor = effSigma(hecorfine);
-  
   printf("effsigma of corrected curve = %5f\n",effsigma_cor);
-
-  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(20e3,0.,2.));
-
-  double effsigma_raw = effSigma(herawfine);
-
   printf("effsigma of raw curve = %5f\n",effsigma_raw);
   
 /*  new TCanvas;

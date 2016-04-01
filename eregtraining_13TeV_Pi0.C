@@ -321,7 +321,8 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
   TCut evenevents = "(Entry$%2==0)";
   TCut oddevents = "(Entry$%2==1)";  
 
-  weightvar.SetTitle(evenevents*selcut);
+  TCut Events3_4 = "((Entry$%4==0)||(Entry$%4==1)||(Entry$%4==2))"
+  weightvar.SetTitle(Events3_4*selcut);
 
   //weightvar title used for per-event weights and selection cuts
 /////////////////////////////////zzc, no evt in current tree//////////
@@ -411,7 +412,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
   if (1) {
     RooHybridBDTAutoPdf bdtpdfdiff("bdtpdfdiff","",tgts,etermconst,r,vdata,vpdf);
 	cout<<"DEBUG 012.1..."<<endl; 
-    bdtpdfdiff.SetMinCutSignificance(5.);
+    bdtpdfdiff.SetMinCutSignificance(2.);
 	cout<<"DEBUG 012.2..."<<endl; 
     //bdtpdfdiff.SetPrescaleInit(100);
     bdtpdfdiff.SetShrinkage(0.1);
