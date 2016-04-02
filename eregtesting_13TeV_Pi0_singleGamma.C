@@ -122,7 +122,7 @@ Double_t effSigma(TH1 * hist)
   
 }
 
-void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = false) {
+void eregtesting_13TeV_Pi0_singleGamma(bool dobarrel=true, bool doele=false, bool gamma2 = false) {
   
   //output dir
   TString gamma1or2 = "gamma1";
@@ -225,6 +225,7 @@ TCut selcut;
   TCut prescale1000alt = "(Entry$%1000==1)";
   TCut prescale50alt = "(Entry$%50==1)";
   
+  TCut Entry1_4 = "(Entry$%4==3)"; 
   if (doele) 
     weightvar.SetTitle(prescale100alt*selcut);
   else
@@ -326,8 +327,14 @@ TCut selcut;
   hecor->SetLineColor(kBlue);
   heraw->SetLineColor(kMagenta);
   
-  hecor->GetXaxis()->SetRangeUser(0.6,10);
-  //heold->GetXaxis()->SetRangeUser(0.6,1.2);
+  hecor->GetXaxis()->SetRangeUser(0.6,1.2);
+  heraw->GetXaxis()->SetRangeUser(0.6,1.2);
+  if(EEorEB == "EE")
+{
+  heraw->GetYaxis()->SetRangeUser(1.0,400.0);
+  hecor->GetYaxis()->SetRangeUser(1.0,400.0);
+} 
+ //heold->GetXaxis()->SetRangeUser(0.6,1.2);
 
   TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(20e3,0.,2.));
   double effsigma_cor = effSigma(hecorfine);
@@ -344,7 +351,7 @@ TCut selcut;
   heraw->Draw("HISTSAME");
 
   //show errSigma in the plot
-  TLegend *leg = new TLegend(0.4, 0.75, 0.8, 0.9);
+  TLegend *leg = new TLegend(0.1, 0.75, 0.5, 0.9);
   leg->AddEntry(hecor,Form("E_{cor}/E_{true}, #sigma_{eff}=%4.3f", effsigma_cor),"l");
   leg->AddEntry(heraw,Form("E_{raw}/E_{true}, #sigma_{eff}=%4.3f", effsigma_raw),"l");
   leg->SetFillStyle(0);

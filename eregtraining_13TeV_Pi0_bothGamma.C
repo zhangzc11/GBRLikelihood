@@ -75,17 +75,13 @@ void initweights(TChain *chain, float *xsecs, float lumi) {
   
 }
 
-void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = false) {
+void eregtraining_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
 //  doele=false;
 //  dobarrel=true;
  
   //output dir
   //TString dirname = "/data/bendavid/eregexampletest/"; 
-  TString dirname = "ereg_ws/gamma1/";
-  if(gamma2)
-	{
-	dirname = "ereg_ws/gamma2/";
-	} 
+  TString dirname = "ereg_ws/";
   gSystem->mkdir(dirname,true);
   gSystem->cd(dirname);  
   
@@ -129,61 +125,31 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
 ///////////////////////////////////////////////////////////////
    	std::vector<std::string> *varseb;
 	std::vector<std::string> *varsee;
-	if(!gamma2)
-	{
-   	//common for EE and EB
-    	varsf->push_back("STr2_enG1_nocor");// /cosh(STr2_Eta_1)");
-    	varsf->push_back("STr2_Nxtal_1");
+   	
+	//common for EE and EB
+    	varsf->push_back("STr2_enG_nocor");// /cosh(STr2_Eta_1)");
+    	varsf->push_back("STr2_Nxtal");
     	
-    	varsf->push_back("STr2_Nxtal_2");
-    	varsf->push_back("STr2_S4S9_1");
-   	varsf->push_back("STr2_S1S9_1");
-   	varsf->push_back("STr2_S2S9_1");
-    	varsf->push_back("STr2_DeltaR_1");
+    	varsf->push_back("STr2_S4S9");
+   	varsf->push_back("STr2_S1S9");
+   	varsf->push_back("STr2_S2S9");
+    	varsf->push_back("STr2_DeltaR");
 
         varseb = new std::vector<std::string>(*varsf);
         varsee = new std::vector<std::string>(*varsf);
         //EE
-	varsee->push_back("STr2_iEtaiX_1");
-   	varsee->push_back("STr2_iPhiiY_1");
-	varsee->push_back("STr2_Eta_1");
-	varsee->push_back("STr2_Es_e1_1");
-    	varsee->push_back("STr2_Es_e2_1");
+	varsee->push_back("STr2_iEtaiX");
+   	varsee->push_back("STr2_iPhiiY");
+	varsee->push_back("STr2_Eta");
+	varsee->push_back("STr2_Es_e1");
+    	varsee->push_back("STr2_Es_e2");
    	//EB
-	varseb->push_back("STr2_Eta_1");
-   	varseb->push_back("STr2_Phi_1");
-	varseb->push_back("STr2_iEta_1on5");
-   	varseb->push_back("STr2_iPhi_1on2");
-   	varseb->push_back("STr2_iPhi_1on20");
-   	varseb->push_back("STr2_iEta_1on2520");
-	}
-	else
-	{
-   	//common for EE and EB
-	varsf->push_back("STr2_enG2_nocor");// /cosh(STr2_Eta_1)");
-    	varsf->push_back("STr2_Nxtal_1");
-    	varsf->push_back("STr2_Nxtal_2");
-    	varsf->push_back("STr2_S4S9_2");
-   	varsf->push_back("STr2_S1S9_2");
-   	varsf->push_back("STr2_S2S9_2");
-    	varsf->push_back("STr2_DeltaR_2");
-
-  	varseb = new std::vector<std::string>(*varsf);
-  	varsee = new std::vector<std::string>(*varsf);
-        //EE
-	varsee->push_back("STr2_iEtaiX_2");
-   	varsee->push_back("STr2_iPhiiY_2");
-	varsee->push_back("STr2_Eta_2");
-	varsee->push_back("STr2_Es_e1_2");
-    	varsee->push_back("STr2_Es_e2_2");
-   	//EB
-	varseb->push_back("STr2_Eta_2");
-   	varseb->push_back("STr2_Phi_2");
-	varseb->push_back("STr2_iEta_2on5");
-   	varseb->push_back("STr2_iPhi_2on2");
-   	varseb->push_back("STr2_iPhi_2on20");
-   	varseb->push_back("STr2_iEta_2on2520");
-	} 
+	varseb->push_back("STr2_Eta");
+   	varseb->push_back("STr2_Phi");
+	varseb->push_back("STr2_iEta_on5");
+   	varseb->push_back("STr2_iPhi_on2");
+   	varseb->push_back("STr2_iPhi_on20");
+   	varseb->push_back("STr2_iEta_on2520");
   
 //  varseb->push_back("ph.e5x5seed/ph.eseed");
  
@@ -218,15 +184,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
   RooArgList condvars(vars);
   
   //create RooRealVar for target
-  RooRealVar *tgtvar ;//
-  if(!gamma2)
-	{
-	tgtvar= new RooRealVar("tgtvar","STr2_enG1_true/STr2_enG1_nocor",1.);//("tgtvar","ph.gene/ph.scrawe",1.);
-	}
-  else
-	{
-	tgtvar= new RooRealVar("tgtvar","STr2_enG2_true/STr2_enG2_nocor",1.);//("tgtvar","ph.gene/ph.scrawe",1.);
-	}
+  RooRealVar *tgtvar = new RooRealVar("tgtvar","STr2_enG_true/STr2_enG_nocor",1.);//("tgtvar","ph.gene/ph.scrawe",1.);
  // if (!dobarrel) tgtvar->SetTitle("ph.gene/(ph.scrawe + ph.scpse)");  
   
   //add target to full list
@@ -269,11 +227,11 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
     tree = new TChain("Tree_Optim");
     if(dobarrel)
     {
-    tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB.root");      
+    tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB_combine.root");      
     }
     else
      {
-    tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EE.root");      
+    tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EE_combine.root");      
      }
 	cout<<"DEBUG 006..."<<endl; 
     xsecs[0] = 0.001835*81930.0;
@@ -291,15 +249,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
   
   //training selection cut
   ///////////////////////////////zzc, photon gen pt?
-  TCut selcut;//
-  if(!gamma2)
-	{
-	selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1 > 0.75)";
-	}
-  else
-	{
-	selcut = "(STr2_enG2_true/cosh(STr2_Eta_2)>1.0) && (STr2_S4S9_2 > 0.75)";
-	}
+  TCut selcut = "(STr2_enG_true/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75)";
 /*
   if (dobarrel) {
     selcut = "ph.genpt>0.5 && ph.isbarrel && ph.ispromptgen"; 
@@ -321,9 +271,10 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, bool gamma2 = 
   TCut evenevents = "(Entry$%2==0)";
   TCut oddevents = "(Entry$%2==1)";  
 
-  TCut Events3_4 = "((Entry$%4==0)||(Entry$%4==1)||(Entry$%4==2))";
+  TCut Events3_4 = "((Entry$%4==0)||(Entry$%4==1)||(Entry$%4==2))";//75% of events
+  TCut Events4_5 = "((Entry$%5==0)||(Entry$%5==1)||(Entry$%5==2)||(Entry$%5==3))";//80% of events
   
-  weightvar.SetTitle(Events3_4*selcut);
+  weightvar.SetTitle(Events4_5*selcut);
 
   //weightvar title used for per-event weights and selection cuts
 /////////////////////////////////zzc, no evt in current tree//////////

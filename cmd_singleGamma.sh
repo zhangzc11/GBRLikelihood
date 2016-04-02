@@ -1,0 +1,7 @@
+date
+mkdir -p log
+root -q -l -b eregtesting_13TeV_Pi0.C+(false,false,false) > log/test_log_gamma1_EE.log
+root -q -l -b eregtesting_13TeV_Pi0.C+(true,false,false) > log/test_log_gamma1_EB.log
+root -q -l -b eregtesting_13TeV_Pi0.C+(false,false,true) > log/test_log_gamma2_EE.log
+root -q -l -b eregtesting_13TeV_Pi0.C+(true,false,true) > log/test_log_gamma2_EB.log
+date
