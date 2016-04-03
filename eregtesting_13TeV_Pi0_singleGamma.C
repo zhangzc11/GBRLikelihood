@@ -225,11 +225,12 @@ TCut selcut;
   TCut prescale1000alt = "(Entry$%1000==1)";
   TCut prescale50alt = "(Entry$%50==1)";
   
-  TCut Entry1_4 = "(Entry$%4==3)"; 
+  TCut Events1_4 = "(Entry$%4==3)"; 
+  TCut Events1_5 = "(Entry$%5==4)"; 
   if (doele) 
     weightvar.SetTitle(prescale100alt*selcut);
   else
-    weightvar.SetTitle(selcut);
+    weightvar.SetTitle(Events1_5*selcut);
   
   //make testing dataset
   RooDataSet *hdata = RooTreeConvert::CreateDataSet("hdata",dtree,vars,weightvar);   

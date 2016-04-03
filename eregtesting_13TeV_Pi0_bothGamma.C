@@ -178,13 +178,13 @@ void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false) {
     {
     TFile *fdin = TFile::Open("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB_combine.root");//("root://eoscms.cern.ch///eos/cms/store/cmst3/user/bendavid/idTreesAug1/hgg-2013Final8TeV_ID_s12-h124gg-gf-v7n_noskim.root");
    // TDirectory *ddir = (TDirectory*)fdin->FindObjectAny("PhotonTreeWriterPreselNoSmear");
-    dtree = (TTree*)fdin->Get("Tree_Optim");
+    dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
     }      
    else
     {
   TFile *fdin = TFile::Open("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EE_combine.root");//("root://eoscms.cern.ch///eos/cms/store/cmst3/user/bendavid/idTreesAug1/hgg-2013Final8TeV_ID_s12-h124gg-gf-v7n_noskim.root");
    // TDirectory *ddir = (TDirectory*)fdin->FindObjectAny("PhotonTreeWriterPreselNoSmear");
-    dtree = (TTree*)fdin->Get("Tree_Optim");
+    dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
    
     } 
   }

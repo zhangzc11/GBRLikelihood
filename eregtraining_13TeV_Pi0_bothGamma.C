@@ -224,7 +224,7 @@ void eregtraining_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
 //     tree->Add("root://eoscms.cern.ch//eos/cms/store/cmst3/user/bendavid/regTreesAug1/hgg-2013Final8TeV_reg_s12-pj40-2em-v7n_noskim.root");
 //    tree->Add("/data/bendavid/regTreesAug1/hgg-2013Final8TeV_reg_s12-pj20_40-2em-v7n_noskim.root");
 //    tree->Add("/data/bendavid/regTreesAug1/hgg-2013Final8TeV_reg_s12-pj40-2em-v7n_noskim.root");    
-    tree = new TChain("Tree_Optim");
+    tree = new TChain("Tree_Optim_gamma");
     if(dobarrel)
     {
     tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB_combine.root");      

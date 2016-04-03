@@ -322,8 +322,9 @@ void eregtraining_13TeV_Pi0_singleGamma(bool dobarrel=true, bool doele=false, bo
   TCut oddevents = "(Entry$%2==1)";  
 
   TCut Events3_4 = "((Entry$%4==0)||(Entry$%4==1)||(Entry$%4==2))";
+  TCut Events4_5 = "((Entry$%5==0)||(Entry$%5==1)||(Entry$%5==2)||(Entry$%5==3))";
   
-  weightvar.SetTitle(evenevents*selcut);
+  weightvar.SetTitle(Events4_5*selcut);
 
   //weightvar title used for per-event weights and selection cuts
 /////////////////////////////////zzc, no evt in current tree//////////
