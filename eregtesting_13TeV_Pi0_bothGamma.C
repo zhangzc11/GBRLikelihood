@@ -122,7 +122,7 @@ Double_t effSigma(TH1 * hist)
   
 }
 
-void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false) {
+void eregtesting_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
   
   //output dir
   TString EEorEB = "EE";
@@ -131,7 +131,7 @@ void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false) {
 	EEorEB = "EB";
 	}
 
-  TString dirname = TString::Format("ereg_test_plots/%s",EEorEB.Data());
+  TString dirname = TString::Format("ereg_test_plots/bothGamms_%s",EEorEB.Data());
   
   gSystem->mkdir(dirname,true);
   gSystem->cd(dirname);    
@@ -319,8 +319,8 @@ TCut selcut;
   heraw->GetXaxis()->SetRangeUser(0.6,1.2);
   if(EEorEB == "EE")
 {
-  heraw->GetYaxis()->SetRangeUser(1.0,400.0);
-  hecor->GetYaxis()->SetRangeUser(1.0,400.0);
+  heraw->GetYaxis()->SetRangeUser(10.0,200.0);
+  hecor->GetYaxis()->SetRangeUser(10.0,200.0);
 } 
  //heold->GetXaxis()->SetRangeUser(0.6,1.2);
 

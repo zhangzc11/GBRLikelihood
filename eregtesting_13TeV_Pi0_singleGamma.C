@@ -332,8 +332,8 @@ TCut selcut;
   heraw->GetXaxis()->SetRangeUser(0.6,1.2);
   if(EEorEB == "EE")
 {
-  heraw->GetYaxis()->SetRangeUser(1.0,400.0);
-  hecor->GetYaxis()->SetRangeUser(1.0,400.0);
+  heraw->GetYaxis()->SetRangeUser(10.0,100.0);
+  hecor->GetYaxis()->SetRangeUser(10.0,100.0);
 } 
  //heold->GetXaxis()->SetRangeUser(0.6,1.2);
 

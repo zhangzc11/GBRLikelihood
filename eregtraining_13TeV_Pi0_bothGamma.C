@@ -128,7 +128,7 @@ void eregtraining_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
    	
 	//common for EE and EB
     	varsf->push_back("STr2_enG_nocor");// /cosh(STr2_Eta_1)");
-    	varsf->push_back("STr2_Nxtal");
+    	varsf->push_back("STr2_Nxtal");//number of crystals receive a certain portion(?) of energy
     	
     	varsf->push_back("STr2_S4S9");
    	varsf->push_back("STr2_S1S9");
@@ -141,8 +141,8 @@ void eregtraining_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
 	varsee->push_back("STr2_iEtaiX");
    	varsee->push_back("STr2_iPhiiY");
 	varsee->push_back("STr2_Eta");
-	varsee->push_back("STr2_Es_e1");
-    	varsee->push_back("STr2_Es_e2");
+	varsee->push_back("STr2_Es_e1");//the gamma energy in the first layer of the preshower
+    	varsee->push_back("STr2_Es_e2");//the gamma energy in the second layer of the preshower
    	//EB
 	varseb->push_back("STr2_Eta");
    	varseb->push_back("STr2_Phi");
