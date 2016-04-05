@@ -470,17 +470,47 @@ TCut selcut;
   DeltaRvar->setRange(0.0,0.1);
   DeltaRvar->setBins(100);
   TH2F *h_CC_DeltaR = hdata->createHistogram(*DeltaRvar, *ecorvar, "","cor_vs_DeltaR");
-  h_CC_DeltaR->GetXaxis()->SetTitle("{#Delta}R"); 
+  h_CC_DeltaR->GetXaxis()->SetTitle("#Delta R"); 
   h_CC_DeltaR->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
   h_CC_DeltaR->Draw("COLZ");
   myC_variables->SaveAs("cor_vs_DeltaR.eps");
   TH2F *h_RC_DeltaR = hdata->createHistogram(*DeltaRvar, *rawvar, "","raw_vs_DeltaR");
-  h_RC_DeltaR->GetXaxis()->SetTitle("DeltaR"); 
+  h_RC_DeltaR->GetXaxis()->SetTitle("#Delta R"); 
   h_RC_DeltaR->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
   h_RC_DeltaR->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_DeltaR.eps");
 
+  if(EEorEB=="EE")
+{
+  RooRealVar *Es_e1var = ws->var("var_8");
+  Es_e1var->setRange(0.0,200.0);
+  Es_e1var->setBins(1000);
+  TH2F *h_CC_Es_e1 = hdata->createHistogram(*Es_e1var, *ecorvar, "","cor_vs_Es_e1");
+  h_CC_Es_e1->GetXaxis()->SetTitle("Es_e1"); 
+  h_CC_Es_e1->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_Es_e1->Draw("COLZ");
+  myC_variables->SaveAs("cor_vs_Es_e1.eps");
+  TH2F *h_RC_Es_e1 = hdata->createHistogram(*Es_e1var, *rawvar, "","raw_vs_Es_e1");
+  h_RC_Es_e1->GetXaxis()->SetTitle("Es_e1"); 
+  h_RC_Es_e1->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_Es_e1->Draw("COLZ");
+  myC_variables->SaveAs("raw_vs_Es_e1.eps");
 
+  RooRealVar *Es_e2var = ws->var("var_9");
+  Es_e2var->setRange(0.0,200.0);
+  Es_e2var->setBins(1000);
+  TH2F *h_CC_Es_e2 = hdata->createHistogram(*Es_e2var, *ecorvar, "","cor_vs_Es_e2");
+  h_CC_Es_e2->GetXaxis()->SetTitle("Es_e2"); 
+  h_CC_Es_e2->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_Es_e2->Draw("COLZ");
+  myC_variables->SaveAs("cor_vs_Es_e2.eps");
+  TH2F *h_RC_Es_e2 = hdata->createHistogram(*Es_e2var, *rawvar, "","raw_vs_Es_e2");
+  h_RC_Es_e2->GetXaxis()->SetTitle("Es_e2"); 
+  h_RC_Es_e2->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_Es_e2->Draw("COLZ");
+  myC_variables->SaveAs("raw_vs_Es_e2.eps");
+
+}
 	
   printf("calc effsigma\n");
   std::cout<<"_"<<EEorEB<<std::endl;
