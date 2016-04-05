@@ -128,7 +128,10 @@ void eregtraining_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
    	
 	//common for EE and EB
     	varsf->push_back("STr2_enG_nocor");// /cosh(STr2_Eta_1)");
-    	varsf->push_back("STr2_Nxtal");//number of crystals receive a certain portion(?) of energy
+    	varsf->push_back("STr2_Eta");
+        varsf->push_back("STr2_Phi");
+
+	varsf->push_back("STr2_Nxtal");//number of crystals receive a certain portion(?) of energy
     	
     	varsf->push_back("STr2_S4S9");
    	varsf->push_back("STr2_S1S9");
@@ -138,14 +141,14 @@ void eregtraining_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
         varseb = new std::vector<std::string>(*varsf);
         varsee = new std::vector<std::string>(*varsf);
         //EE
-	varsee->push_back("STr2_iEtaiX");
-   	varsee->push_back("STr2_iPhiiY");
-	varsee->push_back("STr2_Eta");
+	//varsee->push_back("STr2_iEtaiX");
+   	//varsee->push_back("STr2_iPhiiY");
+	//varsee->push_back("STr2_Eta");
 	varsee->push_back("STr2_Es_e1");//the gamma energy in the first layer of the preshower
     	varsee->push_back("STr2_Es_e2");//the gamma energy in the second layer of the preshower
    	//EB
-	varseb->push_back("STr2_Eta");
-   	varseb->push_back("STr2_Phi");
+	//varseb->push_back("STr2_Eta");
+   	//varseb->push_back("STr2_Phi");
 	varseb->push_back("STr2_iEta_on5");
    	varseb->push_back("STr2_iPhi_on2");
    	varseb->push_back("STr2_iPhi_on20");

@@ -133,9 +133,10 @@ void eregtraining_13TeV_Pi0_singleGamma(bool dobarrel=true, bool doele=false, bo
 	{
    	//common for EE and EB
     	varsf->push_back("STr2_enG1_nocor");// /cosh(STr2_Eta_1)");
-    	varsf->push_back("STr2_Nxtal_1");
-    	
-    	varsf->push_back("STr2_Nxtal_2");
+  	varsf->push_back("STr2_Eta_1");
+   	varsf->push_back("STr2_Phi_1");
+  	varsf->push_back("STr2_Nxtal_1");
+//    	varsf->push_back("STr2_Nxtal_2");
     	varsf->push_back("STr2_S4S9_1");
    	varsf->push_back("STr2_S1S9_1");
    	varsf->push_back("STr2_S2S9_1");
@@ -144,14 +145,14 @@ void eregtraining_13TeV_Pi0_singleGamma(bool dobarrel=true, bool doele=false, bo
         varseb = new std::vector<std::string>(*varsf);
         varsee = new std::vector<std::string>(*varsf);
         //EE
-	varsee->push_back("STr2_iEtaiX_1");
-   	varsee->push_back("STr2_iPhiiY_1");
-	varsee->push_back("STr2_Eta_1");
+//	varsee->push_back("STr2_iEtaiX_1");
+  // 	varsee->push_back("STr2_iPhiiY_1");
+//	varsee->push_back("STr2_Eta_1");
 	varsee->push_back("STr2_Es_e1_1");
     	varsee->push_back("STr2_Es_e2_1");
    	//EB
-	varseb->push_back("STr2_Eta_1");
-   	varseb->push_back("STr2_Phi_1");
+//	varseb->push_back("STr2_Eta_1");
+  // 	varseb->push_back("STr2_Phi_1");
 	varseb->push_back("STr2_iEta_1on5");
    	varseb->push_back("STr2_iPhi_1on2");
    	varseb->push_back("STr2_iPhi_1on20");
@@ -161,8 +162,10 @@ void eregtraining_13TeV_Pi0_singleGamma(bool dobarrel=true, bool doele=false, bo
 	{
    	//common for EE and EB
 	varsf->push_back("STr2_enG2_nocor");// /cosh(STr2_Eta_1)");
-    	varsf->push_back("STr2_Nxtal_1");
-    	varsf->push_back("STr2_Nxtal_2");
+    	varsf->push_back("STr2_Eta_2");
+   	varsf->push_back("STr2_Phi_2");
+	varsf->push_back("STr2_Nxtal_1");
+//    	varsf->push_back("STr2_Nxtal_2");
     	varsf->push_back("STr2_S4S9_2");
    	varsf->push_back("STr2_S1S9_2");
    	varsf->push_back("STr2_S2S9_2");
@@ -171,14 +174,14 @@ void eregtraining_13TeV_Pi0_singleGamma(bool dobarrel=true, bool doele=false, bo
   	varseb = new std::vector<std::string>(*varsf);
   	varsee = new std::vector<std::string>(*varsf);
         //EE
-	varsee->push_back("STr2_iEtaiX_2");
-   	varsee->push_back("STr2_iPhiiY_2");
-	varsee->push_back("STr2_Eta_2");
+//	varsee->push_back("STr2_iEtaiX_2");
+// 	varsee->push_back("STr2_iPhiiY_2");
+//	varsee->push_back("STr2_Eta_2");
 	varsee->push_back("STr2_Es_e1_2");
     	varsee->push_back("STr2_Es_e2_2");
    	//EB
-	varseb->push_back("STr2_Eta_2");
-   	varseb->push_back("STr2_Phi_2");
+	//varseb->push_back("STr2_Eta_2");
+   	//varseb->push_back("STr2_Phi_2");
 	varseb->push_back("STr2_iEta_2on5");
    	varseb->push_back("STr2_iPhi_2on2");
    	varseb->push_back("STr2_iPhi_2on20");

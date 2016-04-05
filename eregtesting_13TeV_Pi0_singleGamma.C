@@ -328,8 +328,8 @@ TCut selcut;
   hecor->SetLineColor(kBlue);
   heraw->SetLineColor(kMagenta);
   
-  hecor->GetXaxis()->SetRangeUser(0.6,1.2);
-  heraw->GetXaxis()->SetRangeUser(0.6,1.2);
+  hecor->GetXaxis()->SetRangeUser(0.0,1.2);
+  heraw->GetXaxis()->SetRangeUser(0.0,1.2);
   if(EEorEB == "EE")
 {
   heraw->GetYaxis()->SetRangeUser(10.0,100.0);

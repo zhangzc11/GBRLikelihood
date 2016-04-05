@@ -31,6 +31,8 @@
 #include "RooCBShape.h"
 #include "RooWorkspace.h"
 #include "TH1D.h"
+#include "TH2D.h"
+#include "TAxis.h"
 #include "TChain.h"
 #include "TCut.h"
 #include "TLine.h"
@@ -234,6 +236,7 @@ TCut selcut;
   
   //input variable corresponding to sceta
   RooRealVar *scetavar = ws->var("var_1");
+  RooRealVar *scphivar = ws->var("var_2");
   
   //regressed output functions
   RooAbsReal *sigmeanlim = ws->function("sigmeanlim");
@@ -315,8 +318,8 @@ TCut selcut;
   hecor->SetLineColor(kBlue);
   heraw->SetLineColor(kMagenta);
   
-  hecor->GetXaxis()->SetRangeUser(0.6,1.2);
-  heraw->GetXaxis()->SetRangeUser(0.6,1.2);
+  hecor->GetXaxis()->SetRangeUser(0.0,1.2);
+  heraw->GetXaxis()->SetRangeUser(0.0,1.2);
   if(EEorEB == "EE")
 {
   heraw->GetYaxis()->SetRangeUser(10.0,200.0);
@@ -350,8 +353,135 @@ TCut selcut;
   cresponse->SaveAs("response.eps");
   cresponse->SetLogy();
   cresponse->SaveAs("responselog.eps");
+ 
+
+  // draw CCs vs eta and phi
+
+  TCanvas *c_eta = new TCanvas;
+  TH1 *h_eta = hdata->createHistogram("h_eta",*scetavar,Binning(100,-3.2,3.2));
+  h_eta->Draw("HIST");
+  c_eta->SaveAs("heta.eps");
+
+  TCanvas *c_phi = new TCanvas;
+  TH1 *h_phi = hdata->createHistogram("h_phi",*scphivar,Binning(100,-3.2,3.2));
+  h_phi->Draw("HIST");
+  c_phi->SaveAs("hphi.eps");
+
+
+   scetavar->setRange(-3.2,3.2);
+   scetavar->setBins(100);
+   scphivar->setRange(-3.2,3.2);
+   scphivar->setBins(100);
+   ecorvar->setRange(0.5,1.5);
+   ecorvar->setBins(100);
+   rawvar->setRange(0.5,1.5);
+   rawvar->setBins(100);
   
+
+  TCanvas *c_cor_eta = new TCanvas;
+  TH2F *h_CC_eta = hdata->createHistogram(*scetavar, *ecorvar, "","cor_vs_eta");
+  h_CC_eta->GetXaxis()->SetTitle("#eta"); 
+  h_CC_eta->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_eta->Draw("COLZ");
+  c_cor_eta->SaveAs("cor_vs_eta.eps");
+	
+  TCanvas *c_cor_phi = new TCanvas;
+  TH2F *h_CC_phi = hdata->createHistogram(*scphivar, *ecorvar, "","cor_vs_phi"); 
+  h_CC_phi->GetXaxis()->SetTitle("#phi"); 
+  h_CC_phi->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_phi->Draw("COLZ");
+  c_cor_phi->SaveAs("cor_vs_phi.eps");
+ 
+  TCanvas *c_raw_eta = new TCanvas;
+  TH2F *h_RC_eta = hdata->createHistogram(*scetavar, *rawvar, "","raw_vs_eta");
+  h_RC_eta->GetXaxis()->SetTitle("#eta"); 
+  h_RC_eta->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_eta->Draw("COLZ");
+  c_raw_eta->SaveAs("raw_vs_eta.eps");
+	
+  TCanvas *c_raw_phi = new TCanvas;
+  TH2F *h_RC_phi = hdata->createHistogram(*scphivar, *rawvar, "","raw_vs_phi"); 
+  h_RC_phi->GetXaxis()->SetTitle("#phi"); 
+  h_RC_phi->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_phi->Draw("COLZ");
+  c_raw_phi->SaveAs("raw_vs_phi.eps");
+
+// other variables
+
+  TCanvas *myC_variables = new TCanvas;
+
+  RooRealVar *Nxtalvar = ws->var("var_3");
+  Nxtalvar->setRange(0,10);
+  Nxtalvar->setBins(10);
+  TH2F *h_CC_Nxtal = hdata->createHistogram(*Nxtalvar, *ecorvar, "","cor_vs_Nxtal");
+  h_CC_Nxtal->GetXaxis()->SetTitle("Nxtal"); 
+  h_CC_Nxtal->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_Nxtal->Draw("COLZ");
+  myC_variables->SaveAs("cor_vs_Nxtal.eps");
+  TH2F *h_RC_Nxtal = hdata->createHistogram(*Nxtalvar, *rawvar, "","raw_vs_Nxtal");
+  h_RC_Nxtal->GetXaxis()->SetTitle("Nxtal"); 
+  h_RC_Nxtal->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_Nxtal->Draw("COLZ");
+  myC_variables->SaveAs("raw_vs_Nxtal.eps");
+	
+  RooRealVar *S4S9var = ws->var("var_4");
+  S4S9var->setRange(0.6,1.0);
+  S4S9var->setBins(100);
+  TH2F *h_CC_S4S9 = hdata->createHistogram(*S4S9var, *ecorvar, "","cor_vs_S4S9");
+  h_CC_S4S9->GetXaxis()->SetTitle("S4S9"); 
+  h_CC_S4S9->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_S4S9->Draw("COLZ");
+  myC_variables->SaveAs("cor_vs_S4S9.eps");
+  TH2F *h_RC_S4S9 = hdata->createHistogram(*S4S9var, *rawvar, "","raw_vs_S4S9");
+  h_RC_S4S9->GetXaxis()->SetTitle("S4S9"); 
+  h_RC_S4S9->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_S4S9->Draw("COLZ");
+  myC_variables->SaveAs("raw_vs_S4S9.eps");
+	 
+  RooRealVar *S1S9var = ws->var("var_5");
+  S1S9var->setRange(0.3,1.0);
+  S1S9var->setBins(100);
+  TH2F *h_CC_S1S9 = hdata->createHistogram(*S1S9var, *ecorvar, "","cor_vs_S1S9");
+  h_CC_S1S9->GetXaxis()->SetTitle("S1S9"); 
+  h_CC_S1S9->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_S1S9->Draw("COLZ");
+  myC_variables->SaveAs("cor_vs_S1S9.eps");
+  TH2F *h_RC_S1S9 = hdata->createHistogram(*S1S9var, *rawvar, "","raw_vs_S1S9");
+  h_RC_S1S9->GetXaxis()->SetTitle("S1S9"); 
+  h_RC_S1S9->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_S1S9->Draw("COLZ");
+  myC_variables->SaveAs("raw_vs_S1S9.eps");
+ 
+  RooRealVar *S2S9var = ws->var("var_6");
+  S2S9var->setRange(0.5,1.0);
+  S2S9var->setBins(100);
+  TH2F *h_CC_S2S9 = hdata->createHistogram(*S2S9var, *ecorvar, "","cor_vs_S2S9");
+  h_CC_S2S9->GetXaxis()->SetTitle("S2S9"); 
+  h_CC_S2S9->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_S2S9->Draw("COLZ");
+  myC_variables->SaveAs("cor_vs_S2S9.eps");
+  TH2F *h_RC_S2S9 = hdata->createHistogram(*S2S9var, *rawvar, "","raw_vs_S2S9");
+  h_RC_S2S9->GetXaxis()->SetTitle("S2S9"); 
+  h_RC_S2S9->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_S2S9->Draw("COLZ");
+  myC_variables->SaveAs("raw_vs_S2S9.eps");
   
+  RooRealVar *DeltaRvar = ws->var("var_7");
+  DeltaRvar->setRange(0.0,0.1);
+  DeltaRvar->setBins(100);
+  TH2F *h_CC_DeltaR = hdata->createHistogram(*DeltaRvar, *ecorvar, "","cor_vs_DeltaR");
+  h_CC_DeltaR->GetXaxis()->SetTitle("{#Delta}R"); 
+  h_CC_DeltaR->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
+  h_CC_DeltaR->Draw("COLZ");
+  myC_variables->SaveAs("cor_vs_DeltaR.eps");
+  TH2F *h_RC_DeltaR = hdata->createHistogram(*DeltaRvar, *rawvar, "","raw_vs_DeltaR");
+  h_RC_DeltaR->GetXaxis()->SetTitle("DeltaR"); 
+  h_RC_DeltaR->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
+  h_RC_DeltaR->Draw("COLZ");
+  myC_variables->SaveAs("raw_vs_DeltaR.eps");
+
+
+	
   printf("calc effsigma\n");
   std::cout<<"_"<<EEorEB<<std::endl;
   printf("effsigma of corrected curve = %5f\n",effsigma_cor);
