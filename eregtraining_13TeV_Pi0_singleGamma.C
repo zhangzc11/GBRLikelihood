@@ -297,11 +297,11 @@ void eregtraining_13TeV_Pi0_singleGamma(bool dobarrel=true, bool doele=false, bo
   TCut selcut;//
   if(!gamma2)
 	{
-	selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1 > 0.75)";
+	selcut = "(STr2_enG1_nocor/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1 > 0.75)";
 	}
   else
 	{
-	selcut = "(STr2_enG2_true/cosh(STr2_Eta_2)>1.0) && (STr2_S4S9_2 > 0.75)";
+	selcut = "(STr2_enG2_nocor/cosh(STr2_Eta_2)>1.0) && (STr2_S4S9_2 > 0.75)";
 	}
 /*
   if (dobarrel) {

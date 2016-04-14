@@ -32,6 +32,7 @@
 #include "RooWorkspace.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TProfile.h"
 #include "TAxis.h"
 #include "TChain.h"
 #include "TCut.h"
@@ -45,7 +46,14 @@
 
 
 using namespace RooFit;
- 
+
+Double_t FWHM(TH1 * hist)
+{
+int bin1 = hist->FindFirstBinAbove(hist->GetMaximum()/2);
+int bin2 = hist->FindLastBinAbove(hist->GetMaximum()/2);
+Double_t fwhm = hist->GetBinCenter(bin2) - hist->GetBinCenter(bin1);
+return fwhm;
+}
 //effsigma function from Chris
 Double_t effSigma(TH1 * hist)
 {
@@ -193,7 +201,7 @@ void eregtesting_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
   
   //selection cuts for testing
 //  TCut selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1>0.75)";
-  TCut selcut = "(STr2_enG_true/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75)";
+  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75)";
 
 /*  
 TCut selcut;
@@ -237,6 +245,9 @@ TCut selcut;
   //input variable corresponding to sceta
   RooRealVar *scetavar = ws->var("var_1");
   RooRealVar *scphivar = ws->var("var_2");
+  
+  RooRealVar *scetaiXvar = ws->var("var_8");
+  RooRealVar *scphiiYvar = ws->var("var_9");
   
   //regressed output functions
   RooAbsReal *sigmeanlim = ws->function("sigmeanlim");
@@ -310,28 +321,60 @@ TCut selcut;
   
 
   //create histograms for eraw/etrue and ecor/etrue to quantify regression performance
-  TH1 *heraw = hdata->createHistogram("hraw",*rawvar,Binning(800,0.,2.));
-  TH1 *hecor = hdata->createHistogram("hecor",*ecorvar);
+  TH1 *heraw;// = hdata->createHistogram("hraw",*rawvar,Binning(800,0.,2.));
+  TH1 *hecor;// = hdata->createHistogram("hecor",*ecorvar);
+  if (EEorEB == "EB")
+  {
+         heraw = hdata->createHistogram("hraw",*rawvar,Binning(800,0.,2.));
+         hecor = hdata->createHistogram("hecor",*ecorvar, Binning(800,0.,2.));
+  }
+  else
+  {
+         heraw = hdata->createHistogram("hraw",*rawvar,Binning(200,0.,2.));
+         hecor = hdata->createHistogram("hecor",*ecorvar, Binning(200,0.,2.));
+  }
+
   
   
   //heold->SetLineColor(kRed);
   hecor->SetLineColor(kBlue);
   heraw->SetLineColor(kMagenta);
   
-  hecor->GetXaxis()->SetRangeUser(0.0,1.2);
-  heraw->GetXaxis()->SetRangeUser(0.0,1.2);
-  if(EEorEB == "EE")
+  hecor->GetYaxis()->SetRangeUser(1.0,1.3*hecor->GetMaximum());
+  heraw->GetYaxis()->SetRangeUser(1.0,1.3*hecor->GetMaximum());
+
+  hecor->GetXaxis()->SetRangeUser(0.0,1.5);
+  heraw->GetXaxis()->SetRangeUser(0.0,1.5);
+  
+/*if(EEorEB == "EE")
 {
   heraw->GetYaxis()->SetRangeUser(10.0,200.0);
   hecor->GetYaxis()->SetRangeUser(10.0,200.0);
-} 
- //heold->GetXaxis()->SetRangeUser(0.6,1.2);
+}
+*/ 
+ 
+//heold->GetXaxis()->SetRangeUser(0.6,1.2);
+  double effsigma_cor, effsigma_raw, fwhm_cor, fwhm_raw;
 
-  TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(20e3,0.,2.));
-  double effsigma_cor = effSigma(hecorfine);
-  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(20e3,0.,2.));
-  double effsigma_raw = effSigma(herawfine);
-  
+  if(EEorEB == "EB")
+  {
+  TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(800,0.,2.));
+  effsigma_cor = effSigma(hecorfine);
+  fwhm_cor = FWHM(hecorfine);
+  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(800,0.,2.));
+  effsigma_raw = effSigma(herawfine);
+  fwhm_raw = FWHM(herawfine);
+  }
+  else
+  {
+  TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(200,0.,2.));
+  effsigma_cor = effSigma(hecorfine);
+  fwhm_cor = FWHM(hecorfine);
+  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(200,0.,2.));
+  effsigma_raw = effSigma(herawfine);
+  fwhm_raw = FWHM(herawfine);
+  }
+
 
   TCanvas *cresponse = new TCanvas;
   gStyle->SetOptStat(0); 
@@ -342,9 +385,9 @@ TCut selcut;
   heraw->Draw("HISTSAME");
 
   //show errSigma in the plot
-  TLegend *leg = new TLegend(0.1, 0.75, 0.5, 0.9);
-  leg->AddEntry(hecor,Form("E_{cor}/E_{true}, #sigma_{eff}=%4.3f", effsigma_cor),"l");
-  leg->AddEntry(heraw,Form("E_{raw}/E_{true}, #sigma_{eff}=%4.3f", effsigma_raw),"l");
+  TLegend *leg = new TLegend(0.1, 0.75, 0.7, 0.9);
+  leg->AddEntry(hecor,Form("E_{cor}/E_{true}, #sigma_{eff}=%4.3f, FWHM=%4.3f", effsigma_cor, fwhm_cor),"l");
+  leg->AddEntry(heraw,Form("E_{raw}/E_{true}, #sigma_{eff}=%4.3f, FWHM=%4.3f", effsigma_raw, fwhm_raw),"l");
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
  // leg->SetTextColor(kRed);
@@ -368,40 +411,83 @@ TCut selcut;
   c_phi->SaveAs("hphi.eps");
 
 
-   scetavar->setRange(-3.2,3.2);
-   scetavar->setBins(100);
-   scphivar->setRange(-3.2,3.2);
-   scphivar->setBins(100);
-   ecorvar->setRange(0.5,1.5);
+   if(EEorEB=="EB")
+   {
+   scetaiXvar->setRange(-90,90);
+   scetaiXvar->setBins(180);
+   scphiiYvar->setRange(0,360);
+   scphiiYvar->setBins(360);
+   }
+   else
+   {
+   scetaiXvar->setRange(0,50);
+   scetaiXvar->setBins(50);
+   scphiiYvar->setRange(0,50);
+   scphiiYvar->setBins(50);
+ 
+   }
+   ecorvar->setRange(1.2,2.0);
    ecorvar->setBins(100);
-   rawvar->setRange(0.5,1.5);
+   rawvar->setRange(1.2,2.0);
    rawvar->setBins(100);
   
 
   TCanvas *c_cor_eta = new TCanvas;
-  TH2F *h_CC_eta = hdata->createHistogram(*scetavar, *ecorvar, "","cor_vs_eta");
-  h_CC_eta->GetXaxis()->SetTitle("#eta"); 
+  TH2F *h_CC_eta = hdata->createHistogram(*scetaiXvar, *ecorvar, "","cor_vs_eta");
+  if(EEorEB=="EB")
+  {
+  h_CC_eta->GetXaxis()->SetTitle("i#eta"); 
+  }
+  else
+  {
+  h_CC_eta->GetXaxis()->SetTitle("iX");
+  }
   h_CC_eta->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
   h_CC_eta->Draw("COLZ");
   c_cor_eta->SaveAs("cor_vs_eta.eps");
-	
+
+  	
   TCanvas *c_cor_phi = new TCanvas;
-  TH2F *h_CC_phi = hdata->createHistogram(*scphivar, *ecorvar, "","cor_vs_phi"); 
-  h_CC_phi->GetXaxis()->SetTitle("#phi"); 
+  TH2F *h_CC_phi = hdata->createHistogram(*scphiiYvar, *ecorvar, "","cor_vs_phi"); 
+  if(EEorEB=="EB")
+  {
+  h_CC_phi->GetXaxis()->SetTitle("i#phi"); 
+  }
+  else
+  {
+  h_CC_phi->GetXaxis()->SetTitle("iY");
+  }
+
   h_CC_phi->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
   h_CC_phi->Draw("COLZ");
   c_cor_phi->SaveAs("cor_vs_phi.eps");
  
   TCanvas *c_raw_eta = new TCanvas;
-  TH2F *h_RC_eta = hdata->createHistogram(*scetavar, *rawvar, "","raw_vs_eta");
-  h_RC_eta->GetXaxis()->SetTitle("#eta"); 
+  TH2F *h_RC_eta = hdata->createHistogram(*scetaiXvar, *rawvar, "","raw_vs_eta");
+  if(EEorEB=="EB")
+  {
+  h_RC_eta->GetXaxis()->SetTitle("i#eta"); 
+  }
+  else
+  {
+  h_RC_eta->GetXaxis()->SetTitle("iX");
+  }
+
   h_RC_eta->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
   h_RC_eta->Draw("COLZ");
   c_raw_eta->SaveAs("raw_vs_eta.eps");
 	
   TCanvas *c_raw_phi = new TCanvas;
-  TH2F *h_RC_phi = hdata->createHistogram(*scphivar, *rawvar, "","raw_vs_phi"); 
-  h_RC_phi->GetXaxis()->SetTitle("#phi"); 
+  TH2F *h_RC_phi = hdata->createHistogram(*scphiiYvar, *rawvar, "","raw_vs_phi"); 
+  if(EEorEB=="EB")
+  {
+  h_RC_phi->GetXaxis()->SetTitle("i#phi"); 
+  }
+  else
+  {
+  h_RC_phi->GetXaxis()->SetTitle("iY");
+  }
+
   h_RC_phi->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
   h_RC_phi->Draw("COLZ");
   c_raw_phi->SaveAs("raw_vs_phi.eps");
@@ -482,7 +568,7 @@ TCut selcut;
 
   if(EEorEB=="EE")
 {
-  RooRealVar *Es_e1var = ws->var("var_8");
+  RooRealVar *Es_e1var = ws->var("var_10");
   Es_e1var->setRange(0.0,200.0);
   Es_e1var->setBins(1000);
   TH2F *h_CC_Es_e1 = hdata->createHistogram(*Es_e1var, *ecorvar, "","cor_vs_Es_e1");
@@ -496,7 +582,7 @@ TCut selcut;
   h_RC_Es_e1->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_Es_e1.eps");
 
-  RooRealVar *Es_e2var = ws->var("var_9");
+  RooRealVar *Es_e2var = ws->var("var_11");
   Es_e2var->setRange(0.0,200.0);
   Es_e2var->setBins(1000);
   TH2F *h_CC_Es_e2 = hdata->createHistogram(*Es_e2var, *ecorvar, "","cor_vs_Es_e2");
@@ -512,10 +598,58 @@ TCut selcut;
 
 }
 	
+  TProfile *p_CC_eta = h_CC_eta->ProfileX();
+  p_CC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+  if(EEorEB == "EB")
+  {
+   p_CC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+//   p_CC_eta->GetXaxis()->SetRangeUser(-1.5,1.5);
+  }
+  p_CC_eta->GetYaxis()->SetTitle("E_{cor}/E_{true}");
+  p_CC_eta->SetTitle("");
+  p_CC_eta->Draw();
+  myC_variables->SaveAs("profile_cor_vs_eta.eps"); 
+  
+  TProfile *p_RC_eta = h_RC_eta->ProfileX();
+  p_RC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+  if(EEorEB=="EB")
+  {
+   p_RC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+  // p_RC_eta->GetXaxis()->SetRangeUser(-1.5,1.5);
+  }
+  p_RC_eta->GetYaxis()->SetTitle("E_{raw}/E_{true}");
+  p_RC_eta->SetTitle("");
+  p_RC_eta->Draw();
+  myC_variables->SaveAs("profile_raw_vs_eta.eps"); 
+
+  TProfile *p_CC_phi = h_CC_phi->ProfileX();
+  p_CC_phi->GetYaxis()->SetRangeUser(0.94,1.06);
+  if(EEorEB == "EB")
+  {
+   p_CC_phi->GetYaxis()->SetRangeUser(0.96,1.02);
+  }
+  p_CC_phi->GetYaxis()->SetTitle("E_{cor}/E_{true}");
+  p_CC_phi->SetTitle("");
+  p_CC_phi->Draw();
+  myC_variables->SaveAs("profile_cor_vs_phi.eps"); 
+  
+  TProfile *p_RC_phi = h_RC_phi->ProfileX();
+  p_RC_phi->GetYaxis()->SetRangeUser(0.92,1.04);
+  if(EEorEB=="EB")
+  {
+   p_RC_phi->GetYaxis()->SetRangeUser(0.92,0.98);
+  }
+  p_RC_phi->GetYaxis()->SetTitle("E_{raw}/E_{true}");
+  p_RC_phi->SetTitle("");
+  p_RC_phi->Draw();
+  myC_variables->SaveAs("profile_raw_vs_phi.eps"); 
+
+
+
   printf("calc effsigma\n");
   std::cout<<"_"<<EEorEB<<std::endl;
-  printf("effsigma of corrected curve = %5f\n",effsigma_cor);
-  printf("effsigma of raw curve = %5f\n",effsigma_raw);
+  printf("corrected curve effSigma= %5f, FWHM=%5f \n",effsigma_cor, fwhm_cor);
+  printf("raw curve effSigma= %5f FWHM=%5f \n",effsigma_raw, fwhm_raw);
   
 /*  new TCanvas;
   RooPlot *ploteold = testvar.frame(0.6,1.2,100);

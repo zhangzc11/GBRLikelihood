@@ -43,6 +43,15 @@
 
 
 using namespace RooFit;
+
+Double_t FWHM(TH1 * hist)
+{
+int bin1 = hist->FindFirstBinAbove(hist->GetMaximum()/2);
+int bin2 = hist->FindLastBinAbove(hist->GetMaximum()/2);
+Double_t fwhm = hist->GetBinCenter(bin2) - hist->GetBinCenter(bin1);
+return fwhm;
+}
+
  
 //effsigma function from Chris
 Double_t effSigma(TH1 * hist)
@@ -199,11 +208,11 @@ void eregtesting_13TeV_Pi0_singleGamma(bool dobarrel=true, bool doele=false, boo
   TCut selcut;//
   if(!gamma2)
         {
-        selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1 > 0.75)";
+        selcut = "(STr2_enG1_nocor/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1 > 0.75)";
         }
   else
         {
-        selcut = "(STr2_enG2_true/cosh(STr2_Eta_2)>1.0) && (STr2_S4S9_2 > 0.75)";
+        selcut = "(STr2_enG2_nocor/cosh(STr2_Eta_2)>1.0) && (STr2_S4S9_2 > 0.75)";
         }
 
 /*  
@@ -320,28 +329,55 @@ TCut selcut;
   
 
   //create histograms for eraw/etrue and ecor/etrue to quantify regression performance
-  TH1 *heraw = hdata->createHistogram("hraw",*rawvar,Binning(800,0.,2.));
-  TH1 *hecor = hdata->createHistogram("hecor",*ecorvar);
   
-  
+  TH1 *heraw;// = hdata->createHistogram("hraw",*rawvar,Binning(800,0.,2.));
+  TH1 *hecor;// = hdata->createHistogram("hecor",*ecorvar);
+  if (EEorEB == "EB")
+  {
+	 heraw = hdata->createHistogram("hraw",*rawvar,Binning(800,0.,2.));
+         hecor = hdata->createHistogram("hecor",*ecorvar, Binning(800,0.,2.));
+  }
+  else
+  {
+	 heraw = hdata->createHistogram("hraw",*rawvar,Binning(200,0.,2.));
+         hecor = hdata->createHistogram("hecor",*ecorvar, Binning(200,0.,2.));
+  }
+
   //heold->SetLineColor(kRed);
   hecor->SetLineColor(kBlue);
   heraw->SetLineColor(kMagenta);
-  
-  hecor->GetXaxis()->SetRangeUser(0.0,1.2);
-  heraw->GetXaxis()->SetRangeUser(0.0,1.2);
-  if(EEorEB == "EE")
+
+  hecor->GetYaxis()->SetRangeUser(1.0,1.3*hecor->GetMaximum());
+  heraw->GetYaxis()->SetRangeUser(1.0,1.3*hecor->GetMaximum());
+
+  hecor->GetXaxis()->SetRangeUser(0.0,1.5);
+  heraw->GetXaxis()->SetRangeUser(0.0,1.5);
+ /* if(EEorEB == "EE")
 {
   heraw->GetYaxis()->SetRangeUser(10.0,100.0);
   hecor->GetYaxis()->SetRangeUser(10.0,100.0);
-} 
+}*/ 
  //heold->GetXaxis()->SetRangeUser(0.6,1.2);
+  double effsigma_cor, effsigma_raw, fwhm_cor, fwhm_raw;
 
-  TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(20e3,0.,2.));
-  double effsigma_cor = effSigma(hecorfine);
-  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(20e3,0.,2.));
-  double effsigma_raw = effSigma(herawfine);
-  
+  if(EEorEB == "EB")
+  {
+  TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(800,0.,2.));
+  effsigma_cor = effSigma(hecorfine);
+  fwhm_cor = FWHM(hecorfine);
+  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(800,0.,2.));
+  effsigma_raw = effSigma(herawfine);
+  fwhm_raw = FWHM(herawfine);
+  }
+  else
+  {
+  TH1 *hecorfine = hdata->createHistogram("hecorfine",*ecorvar,Binning(200,0.,2.));
+  effsigma_cor = effSigma(hecorfine);
+  fwhm_cor = FWHM(hecorfine);
+  TH1 *herawfine = hdata->createHistogram("herawfine",*rawvar,Binning(200,0.,2.));
+  effsigma_raw = effSigma(herawfine);
+  fwhm_raw = FWHM(herawfine);
+  }
 
   TCanvas *cresponse = new TCanvas;
   gStyle->SetOptStat(0); 
@@ -352,9 +388,10 @@ TCut selcut;
   heraw->Draw("HISTSAME");
 
   //show errSigma in the plot
-  TLegend *leg = new TLegend(0.1, 0.75, 0.5, 0.9);
-  leg->AddEntry(hecor,Form("E_{cor}/E_{true}, #sigma_{eff}=%4.3f", effsigma_cor),"l");
-  leg->AddEntry(heraw,Form("E_{raw}/E_{true}, #sigma_{eff}=%4.3f", effsigma_raw),"l");
+  TLegend *leg = new TLegend(0.1, 0.75, 0.7, 0.9);
+  leg->AddEntry(hecor,Form("E_{cor}/E_{true}, #sigma_{eff}=%4.3f, FWHM=%4.3f", effsigma_cor, fwhm_cor),"l");
+  leg->AddEntry(heraw,Form("E_{raw}/E_{true}, #sigma_{eff}=%4.3f, FWHM=%4.3f", effsigma_raw, fwhm_raw),"l");
+
   leg->SetFillStyle(0);
   leg->SetBorderSize(0);
  // leg->SetTextColor(kRed);

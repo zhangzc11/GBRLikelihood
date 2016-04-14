@@ -2,8 +2,8 @@
 
 void combineGammas()
 {
-	string file_in_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EEEB.root";
-	string file_out_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EEEB_combine.root";
+	string file_in_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB.root";
+	string file_out_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB_combine.root";
       
       Float_t Op_enG1_rec;
       Float_t Op_enG2_rec;
@@ -117,26 +117,71 @@ void combineGammas()
 
 	TFile *f_out = new TFile(file_out_Name.c_str(),"RECREATE");
 	Tree_Optim_gamma = new TTree("Tree_Optim_gamma","Output TTree gamma");
-	Tree_Optim_gamma->Branch( "STr2_enG_rec",      &Op_enG1_rec,         "STr2_enG_rec/F");
-        Tree_Optim_gamma->Branch( "STr2_enG_nocor",    &Op_enG1_nocor,       "STr2_enG_nocor/F");
-        Tree_Optim_gamma->Branch( "STr2_enG_true",     &Op_enG1_true,        "STr2_enG_true/F");
+	Tree_Optim_gamma->Branch( "STr2_enG_rec",      &Op_enG_rec,         "STr2_enG_rec/F");
+        Tree_Optim_gamma->Branch( "STr2_enG_nocor",    &Op_enG_nocor,       "STr2_enG_nocor/F");
+        Tree_Optim_gamma->Branch( "STr2_enG_true",     &Op_enG_true,        "STr2_enG_true/F");
        // Tree_Optim_gamma->Branch( "STr2_DeltaRG1G2",    &Op_DeltaRG1G2_common,       "STr2_DeltaRG1G2/F");
-        Tree_Optim_gamma->Branch( "STr2_Es_e1",       &Op_Es_e1_1,          "STr2_Es_e1/F");
-        Tree_Optim_gamma->Branch( "STr2_Es_e2",       &Op_Es_e2_1,          "STr2_Es_e2/F");
-        Tree_Optim_gamma->Branch( "STr2_S4S9",        &Op_S4S9_1,           "STr2_S4S9/F");
-        Tree_Optim_gamma->Branch( "STr2_S2S9",        &Op_S2S9_1,           "STr2_S2S9/F");
-        Tree_Optim_gamma->Branch( "STr2_S1S9",        &Op_S1S9_1,           "STr2_S1S9/F");
-        Tree_Optim_gamma->Branch( "STr2_Eta",         &Op_Eta_1,            "STr2_Eta/F");
-        Tree_Optim_gamma->Branch( "STr2_Phi",         &Op_Phi_1,            "STr2_Phi/F");
-        Tree_Optim_gamma->Branch( "STr2_Time",        &Op_Time_1,           "STr2_Time/F");
-        Tree_Optim_gamma->Branch( "STr2_DeltaR",      &Op_DeltaR_1,         "STr2_DeltaR/F");
-        Tree_Optim_gamma->Branch( "STr2_Nxtal",       &Op_Nxtal_1,          "STr2_Nxtal/I");
-        Tree_Optim_gamma->Branch( "STr2_iEtaiX",      &Op_iEtaiX_1,         "STr2_iEtaiX/I");
-        Tree_Optim_gamma->Branch( "STr2_iPhiiY",      &Op_iPhiiY_1,         "STr2_iPhiiY/I");
-        Tree_Optim_gamma->Branch( "STr2_iEta_on5",     &Op_iEta_1on5,        "STr2_iEta_on5/I");
-        Tree_Optim_gamma->Branch( "STr2_iPhi_on2",     &Op_iPhi_1on2,        "STr2_iPhi_on2/I");
-        Tree_Optim_gamma->Branch( "STr2_iEta_on2520",  &Op_iEta_1on2520,     "STr2_iEta_on2520/I");
-        Tree_Optim_gamma->Branch( "STr2_iPhi_on20",    &Op_iPhi_1on20,       "STr2_iPhi_on20/I");
+        Tree_Optim_gamma->Branch( "STr2_Es_e1",       &Op_Es_e1,          "STr2_Es_e1/F");
+        Tree_Optim_gamma->Branch( "STr2_Es_e2",       &Op_Es_e2,          "STr2_Es_e2/F");
+        Tree_Optim_gamma->Branch( "STr2_S4S9",        &Op_S4S9,           "STr2_S4S9/F");
+        Tree_Optim_gamma->Branch( "STr2_S2S9",        &Op_S2S9,           "STr2_S2S9/F");
+        Tree_Optim_gamma->Branch( "STr2_S1S9",        &Op_S1S9,           "STr2_S1S9/F");
+        Tree_Optim_gamma->Branch( "STr2_Eta",         &Op_Eta,            "STr2_Eta/F");
+        Tree_Optim_gamma->Branch( "STr2_Phi",         &Op_Phi,            "STr2_Phi/F");
+        Tree_Optim_gamma->Branch( "STr2_Time",        &Op_Time,           "STr2_Time/F");
+        Tree_Optim_gamma->Branch( "STr2_DeltaR",      &Op_DeltaR,         "STr2_DeltaR/F");
+        Tree_Optim_gamma->Branch( "STr2_Nxtal",       &Op_Nxtal,          "STr2_Nxtal/I");
+        Tree_Optim_gamma->Branch( "STr2_iEtaiX",      &Op_iEtaiX,         "STr2_iEtaiX/I");
+        Tree_Optim_gamma->Branch( "STr2_iPhiiY",      &Op_iPhiiY,         "STr2_iPhiiY/I");
+        Tree_Optim_gamma->Branch( "STr2_iEta_on5",     &Op_iEta_on5,        "STr2_iEta_on5/I");
+        Tree_Optim_gamma->Branch( "STr2_iPhi_on2",     &Op_iPhi_on2,        "STr2_iPhi_on2/I");
+        Tree_Optim_gamma->Branch( "STr2_iEta_on2520",  &Op_iEta_on2520,     "STr2_iEta_on2520/I");
+        Tree_Optim_gamma->Branch( "STr2_iPhi_on20",    &Op_iPhi_on20,       "STr2_iPhi_on20/I");
+
+	Tree_Optim_gamma1 = new TTree("Tree_Optim_gamma1","Output TTree gamma1");
+	Tree_Optim_gamma1->Branch( "STr2_enG_rec",      &Op_enG_rec,         "STr2_enG_rec/F");
+        Tree_Optim_gamma1->Branch( "STr2_enG_nocor",    &Op_enG_nocor,       "STr2_enG_nocor/F");
+        Tree_Optim_gamma1->Branch( "STr2_enG_true",     &Op_enG_true,        "STr2_enG_true/F");
+       // Tree_Optim_gamma1->Branch( "STr2_DeltaRG1G2",    &Op_DeltaRG1G2_common,       "STr2_DeltaRG1G2/F");
+        Tree_Optim_gamma1->Branch( "STr2_Es_e1",       &Op_Es_e1,          "STr2_Es_e1/F");
+        Tree_Optim_gamma1->Branch( "STr2_Es_e2",       &Op_Es_e2,          "STr2_Es_e2/F");
+        Tree_Optim_gamma1->Branch( "STr2_S4S9",        &Op_S4S9,           "STr2_S4S9/F");
+        Tree_Optim_gamma1->Branch( "STr2_S2S9",        &Op_S2S9,           "STr2_S2S9/F");
+        Tree_Optim_gamma1->Branch( "STr2_S1S9",        &Op_S1S9,           "STr2_S1S9/F");
+        Tree_Optim_gamma1->Branch( "STr2_Eta",         &Op_Eta,            "STr2_Eta/F");
+        Tree_Optim_gamma1->Branch( "STr2_Phi",         &Op_Phi,            "STr2_Phi/F");
+        Tree_Optim_gamma1->Branch( "STr2_Time",        &Op_Time,           "STr2_Time/F");
+        Tree_Optim_gamma1->Branch( "STr2_DeltaR",      &Op_DeltaR,         "STr2_DeltaR/F");
+        Tree_Optim_gamma1->Branch( "STr2_Nxtal",       &Op_Nxtal,          "STr2_Nxtal/I");
+        Tree_Optim_gamma1->Branch( "STr2_iEtaiX",      &Op_iEtaiX,         "STr2_iEtaiX/I");
+        Tree_Optim_gamma1->Branch( "STr2_iPhiiY",      &Op_iPhiiY,         "STr2_iPhiiY/I");
+        Tree_Optim_gamma1->Branch( "STr2_iEta_on5",     &Op_iEta_on5,        "STr2_iEta_on5/I");
+        Tree_Optim_gamma1->Branch( "STr2_iPhi_on2",     &Op_iPhi_on2,        "STr2_iPhi_on2/I");
+        Tree_Optim_gamma1->Branch( "STr2_iEta_on2520",  &Op_iEta_on2520,     "STr2_iEta_on2520/I");
+        Tree_Optim_gamma1->Branch( "STr2_iPhi_on20",    &Op_iPhi_on20,       "STr2_iPhi_on20/I");
+
+	Tree_Optim_gamma2 = new TTree("Tree_Optim_gamma2","Output TTree gamma2");
+	Tree_Optim_gamma2->Branch( "STr2_enG_rec",      &Op_enG_rec,         "STr2_enG_rec/F");
+        Tree_Optim_gamma2->Branch( "STr2_enG_nocor",    &Op_enG_nocor,       "STr2_enG_nocor/F");
+        Tree_Optim_gamma2->Branch( "STr2_enG_true",     &Op_enG_true,        "STr2_enG_true/F");
+       // Tree_Optim_gamma2->Branch( "STr2_DeltaRG1G2",    &Op_DeltaRG1G2_common,       "STr2_DeltaRG1G2/F");
+        Tree_Optim_gamma2->Branch( "STr2_Es_e1",       &Op_Es_e1,          "STr2_Es_e1/F");
+        Tree_Optim_gamma2->Branch( "STr2_Es_e2",       &Op_Es_e2,          "STr2_Es_e2/F");
+        Tree_Optim_gamma2->Branch( "STr2_S4S9",        &Op_S4S9,           "STr2_S4S9/F");
+        Tree_Optim_gamma2->Branch( "STr2_S2S9",        &Op_S2S9,           "STr2_S2S9/F");
+        Tree_Optim_gamma2->Branch( "STr2_S1S9",        &Op_S1S9,           "STr2_S1S9/F");
+        Tree_Optim_gamma2->Branch( "STr2_Eta",         &Op_Eta,            "STr2_Eta/F");
+        Tree_Optim_gamma2->Branch( "STr2_Phi",         &Op_Phi,            "STr2_Phi/F");
+        Tree_Optim_gamma2->Branch( "STr2_Time",        &Op_Time,           "STr2_Time/F");
+        Tree_Optim_gamma2->Branch( "STr2_DeltaR",      &Op_DeltaR,         "STr2_DeltaR/F");
+        Tree_Optim_gamma2->Branch( "STr2_Nxtal",       &Op_Nxtal,          "STr2_Nxtal/I");
+        Tree_Optim_gamma2->Branch( "STr2_iEtaiX",      &Op_iEtaiX,         "STr2_iEtaiX/I");
+        Tree_Optim_gamma2->Branch( "STr2_iPhiiY",      &Op_iPhiiY,         "STr2_iPhiiY/I");
+        Tree_Optim_gamma2->Branch( "STr2_iEta_on5",     &Op_iEta_on5,        "STr2_iEta_on5/I");
+        Tree_Optim_gamma2->Branch( "STr2_iPhi_on2",     &Op_iPhi_on2,        "STr2_iPhi_on2/I");
+        Tree_Optim_gamma2->Branch( "STr2_iEta_on2520",  &Op_iEta_on2520,     "STr2_iEta_on2520/I");
+        Tree_Optim_gamma2->Branch( "STr2_iPhi_on20",    &Op_iPhi_on20,       "STr2_iPhi_on20/I");
+
 
 	for(int i=0;i<N_Entries_Pi0;i++)
 	{
@@ -164,6 +209,7 @@ void combineGammas()
 	       	Op_iPhi_on20		=  Op_iPhi_1on20;
 
 		Tree_Optim_gamma->Fill();	
+		Tree_Optim_gamma1->Fill();	
 		//gamma2
 	       	Op_enG_rec 		=  Op_enG2_rec;
 	 //      	Op_DeltaRG1G2_common 	=  Op_DeltaRG1G2;
@@ -187,7 +233,12 @@ void combineGammas()
 	       	Op_iPhi_on20		=  Op_iPhi_2on20;
 
 		Tree_Optim_gamma->Fill();		
+		Tree_Optim_gamma2->Fill();		
 
 	}
 	Tree_Optim_gamma->Write();	
+	Tree_Optim_gamma1->Write();	
+	Tree_Optim_gamma2->Write();	
+
+
 }
