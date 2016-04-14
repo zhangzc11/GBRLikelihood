@@ -132,7 +132,7 @@ Double_t effSigma(TH1 * hist)
   
 }
 
-void eregtesting_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
+void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false,int gammaID=0) {
   
   //output dir
   TString EEorEB = "EE";
@@ -140,8 +140,16 @@ void eregtesting_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
 	{
 	EEorEB = "EB";
 	}
-
-  TString dirname = TString::Format("ereg_test_plots/bothGamms_%s",EEorEB.Data());
+  TString gammaDir = "bothGammas";
+  if(gammaID==1)
+  {
+   gammaDir = "gamma1";
+  }
+  else if(gammaID==2)
+  {
+   gammaDir = "gamma2";
+  }
+  TString dirname = TString::Format("ereg_test_plots/%s_%s",gammaDir.Data(),EEorEB.Data());
   
   gSystem->mkdir(dirname,true);
   gSystem->cd(dirname);    
@@ -157,7 +165,7 @@ void eregtesting_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
   else if (!doele && !dobarrel) 
     fname = "wereg_ph_ee.root";
   
-  TString infile = TString::Format("../../ereg_ws/%s",fname.Data());
+  TString infile = TString::Format("../../ereg_ws/%s/%s",gammaDir.Data(),fname.Data());
   
   TFile *fws = TFile::Open(infile); 
   RooWorkspace *ws = (RooWorkspace*)fws->Get("wereg");
@@ -188,14 +196,35 @@ void eregtesting_13TeV_Pi0_bothGamma(bool dobarrel=true, bool doele=false) {
     {
     TFile *fdin = TFile::Open("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB_combine.root");//("root://eoscms.cern.ch///eos/cms/store/cmst3/user/bendavid/idTreesAug1/hgg-2013Final8TeV_ID_s12-h124gg-gf-v7n_noskim.root");
    // TDirectory *ddir = (TDirectory*)fdin->FindObjectAny("PhotonTreeWriterPreselNoSmear");
-    dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
+	if(gammaID==0)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
+	}
+	else if(gammaID==1)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma1");
+	}
+	else if(gammaID==2)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma2");
+	}
     }      
    else
     {
   TFile *fdin = TFile::Open("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EE_combine.root");//("root://eoscms.cern.ch///eos/cms/store/cmst3/user/bendavid/idTreesAug1/hgg-2013Final8TeV_ID_s12-h124gg-gf-v7n_noskim.root");
    // TDirectory *ddir = (TDirectory*)fdin->FindObjectAny("PhotonTreeWriterPreselNoSmear");
-    dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
-   
+   	if(gammaID==0)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
+	}
+	else if(gammaID==1)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma1");
+	}
+	else if(gammaID==2)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma2");
+	}
     } 
   }
   
