@@ -295,11 +295,16 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   TCut prescale1000 = "(Entry$%1000==0)";  
   TCut evenevents = "(Entry$%2==0)";
   TCut oddevents = "(Entry$%2==1)";  
+  TCut Events3_4 = "(Entry$%4==3)";
+  TCut Events1_4 = "(Entry$%4==1)";
+  TCut Events2_4 = "(Entry$%4==2)";
+  TCut Events0_4 = "(Entry$%4==0)";
+  TCut Events01_4 = "(Entry$%4<2)";
+  TCut Events23_4 = "(Entry$%4>1)";
 
-  TCut Events3_4 = "((Entry$%4==0)||(Entry$%4==1)||(Entry$%4==2))";//75% of events
-  TCut Events4_5 = "((Entry$%5==0)||(Entry$%5==1)||(Entry$%5==2)||(Entry$%5==3))";//80% of events
+
   
-  weightvar.SetTitle(Events4_5*selcut);
+  weightvar.SetTitle(Events23_4*selcut);
 
   //weightvar title used for per-event weights and selection cuts
 /////////////////////////////////zzc, no evt in current tree//////////
