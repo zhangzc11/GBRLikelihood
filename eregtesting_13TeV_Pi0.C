@@ -229,9 +229,9 @@ void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false,int gammaID=0) {
   }
   
   //selection cuts for testing
-//  TCut selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1>0.75)";
-  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75)";
-
+  //TCut selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1>0.75)";
+  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2)";
+//  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_S4S9 < 0.999) && (STr2_S2S9 < 0.999)";
 /*  
 TCut selcut;
   if (dobarrel) 
@@ -280,9 +280,7 @@ TCut selcut;
   RooRealVar *scetavar = ws->var("var_1");
   RooRealVar *scphivar = ws->var("var_2");
   
-  RooRealVar *scetaiXvar = ws->var("var_8");
-  RooRealVar *scphiiYvar = ws->var("var_9");
-  
+ 
   //regressed output functions
   RooAbsReal *sigmeanlim = ws->function("sigmeanlim");
   RooAbsReal *sigwidthlim = ws->function("sigwidthlim");
@@ -433,7 +431,7 @@ TCut selcut;
  
 
   // draw CCs vs eta and phi
-
+/*
   TCanvas *c_eta = new TCanvas;
   TH1 *h_eta = hdata->createHistogram("h_eta",*scetavar,Binning(100,-3.2,3.2));
   h_eta->Draw("HIST");
@@ -444,25 +442,27 @@ TCut selcut;
   h_phi->Draw("HIST");
   c_phi->SaveAs("hphi.eps");
 
-
+  RooRealVar *scetaiXvar = ws->var("var_8");
+  RooRealVar *scphiiYvar = ws->var("var_9");
+ 
    if(EEorEB=="EB")
    {
    scetaiXvar->setRange(-90,90);
-   scetaiXvar->setBins(180);
+   scetaiXvar->setBins(1800);
    scphiiYvar->setRange(0,360);
-   scphiiYvar->setBins(360);
+   scphiiYvar->setBins(3600);
    }
    else
    {
    scetaiXvar->setRange(0,50);
-   scetaiXvar->setBins(50);
+   scetaiXvar->setBins(500);
    scphiiYvar->setRange(0,50);
-   scphiiYvar->setBins(50);
+   scphiiYvar->setBins(500);
  
    }
-   ecorvar->setRange(1.2,2.0);
+   ecorvar->setRange(0.5,1.5);
    ecorvar->setBins(100);
-   rawvar->setRange(1.2,2.0);
+   rawvar->setRange(0.5,1.5);
    rawvar->setBins(100);
   
 
@@ -633,10 +633,10 @@ TCut selcut;
 }
 	
   TProfile *p_CC_eta = h_CC_eta->ProfileX();
-  p_CC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+  p_CC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
   if(EEorEB == "EB")
   {
-   p_CC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+   p_CC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
 //   p_CC_eta->GetXaxis()->SetRangeUser(-1.5,1.5);
   }
   p_CC_eta->GetYaxis()->SetTitle("E_{cor}/E_{true}");
@@ -645,10 +645,10 @@ TCut selcut;
   myC_variables->SaveAs("profile_cor_vs_eta.eps"); 
   
   TProfile *p_RC_eta = h_RC_eta->ProfileX();
-  p_RC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+  p_RC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
   if(EEorEB=="EB")
   {
-   p_RC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+   p_RC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
   // p_RC_eta->GetXaxis()->SetRangeUser(-1.5,1.5);
   }
   p_RC_eta->GetYaxis()->SetTitle("E_{raw}/E_{true}");
@@ -684,6 +684,7 @@ TCut selcut;
   std::cout<<"_"<<EEorEB<<std::endl;
   printf("corrected curve effSigma= %5f, FWHM=%5f \n",effsigma_cor, fwhm_cor);
   printf("raw curve effSigma= %5f FWHM=%5f \n",effsigma_raw, fwhm_raw);
+*/
   
 /*  new TCanvas;
   RooPlot *ploteold = testvar.frame(0.6,1.2,100);
