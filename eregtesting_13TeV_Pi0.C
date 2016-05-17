@@ -431,7 +431,7 @@ TCut selcut;
  
 
   // draw CCs vs eta and phi
-/*
+
   TCanvas *c_eta = new TCanvas;
   TH1 *h_eta = hdata->createHistogram("h_eta",*scetavar,Binning(100,-3.2,3.2));
   h_eta->Draw("HIST");
@@ -442,8 +442,8 @@ TCut selcut;
   h_phi->Draw("HIST");
   c_phi->SaveAs("hphi.eps");
 
-  RooRealVar *scetaiXvar = ws->var("var_8");
-  RooRealVar *scphiiYvar = ws->var("var_9");
+  RooRealVar *scetaiXvar = ws->var("var_7");
+  RooRealVar *scphiiYvar = ws->var("var_8");
  
    if(EEorEB=="EB")
    {
@@ -557,7 +557,8 @@ TCut selcut;
   h_RC_S4S9->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
   h_RC_S4S9->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_S4S9.eps");
-	 
+	
+/* 
   RooRealVar *S1S9var = ws->var("var_5");
   S1S9var->setRange(0.3,1.0);
   S1S9var->setBins(100);
@@ -571,8 +572,9 @@ TCut selcut;
   h_RC_S1S9->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
   h_RC_S1S9->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_S1S9.eps");
- 
-  RooRealVar *S2S9var = ws->var("var_6");
+ */
+
+  RooRealVar *S2S9var = ws->var("var_5");
   S2S9var->setRange(0.5,1.0);
   S2S9var->setBins(100);
   TH2F *h_CC_S2S9 = hdata->createHistogram(*S2S9var, *ecorvar, "","cor_vs_S2S9");
@@ -586,7 +588,7 @@ TCut selcut;
   h_RC_S2S9->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_S2S9.eps");
   
-  RooRealVar *DeltaRvar = ws->var("var_7");
+  RooRealVar *DeltaRvar = ws->var("var_6");
   DeltaRvar->setRange(0.0,0.1);
   DeltaRvar->setBins(100);
   TH2F *h_CC_DeltaR = hdata->createHistogram(*DeltaRvar, *ecorvar, "","cor_vs_DeltaR");
@@ -602,7 +604,7 @@ TCut selcut;
 
   if(EEorEB=="EE")
 {
-  RooRealVar *Es_e1var = ws->var("var_10");
+  RooRealVar *Es_e1var = ws->var("var_9");
   Es_e1var->setRange(0.0,200.0);
   Es_e1var->setBins(1000);
   TH2F *h_CC_Es_e1 = hdata->createHistogram(*Es_e1var, *ecorvar, "","cor_vs_Es_e1");
@@ -616,7 +618,7 @@ TCut selcut;
   h_RC_Es_e1->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_Es_e1.eps");
 
-  RooRealVar *Es_e2var = ws->var("var_11");
+  RooRealVar *Es_e2var = ws->var("var_10");
   Es_e2var->setRange(0.0,200.0);
   Es_e2var->setBins(1000);
   TH2F *h_CC_Es_e2 = hdata->createHistogram(*Es_e2var, *ecorvar, "","cor_vs_Es_e2");
@@ -636,7 +638,7 @@ TCut selcut;
   p_CC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
   if(EEorEB == "EB")
   {
-   p_CC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
+   p_CC_eta->GetYaxis()->SetRangeUser(0.85,1.0);
 //   p_CC_eta->GetXaxis()->SetRangeUser(-1.5,1.5);
   }
   p_CC_eta->GetYaxis()->SetTitle("E_{cor}/E_{true}");
@@ -648,7 +650,7 @@ TCut selcut;
   p_RC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
   if(EEorEB=="EB")
   {
-   p_RC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
+   p_RC_eta->GetYaxis()->SetRangeUser(0.80,0.95);
   // p_RC_eta->GetXaxis()->SetRangeUser(-1.5,1.5);
   }
   p_RC_eta->GetYaxis()->SetTitle("E_{raw}/E_{true}");
@@ -657,10 +659,10 @@ TCut selcut;
   myC_variables->SaveAs("profile_raw_vs_eta.eps"); 
 
   TProfile *p_CC_phi = h_CC_phi->ProfileX();
-  p_CC_phi->GetYaxis()->SetRangeUser(0.94,1.06);
+  p_CC_phi->GetYaxis()->SetRangeUser(0.84,1.06);
   if(EEorEB == "EB")
   {
-   p_CC_phi->GetYaxis()->SetRangeUser(0.96,1.02);
+   p_CC_phi->GetYaxis()->SetRangeUser(0.91,1.00);
   }
   p_CC_phi->GetYaxis()->SetTitle("E_{cor}/E_{true}");
   p_CC_phi->SetTitle("");
@@ -668,10 +670,10 @@ TCut selcut;
   myC_variables->SaveAs("profile_cor_vs_phi.eps"); 
   
   TProfile *p_RC_phi = h_RC_phi->ProfileX();
-  p_RC_phi->GetYaxis()->SetRangeUser(0.92,1.04);
+  p_RC_phi->GetYaxis()->SetRangeUser(0.82,1.04);
   if(EEorEB=="EB")
   {
-   p_RC_phi->GetYaxis()->SetRangeUser(0.92,0.98);
+   p_RC_phi->GetYaxis()->SetRangeUser(0.86,0.95);
   }
   p_RC_phi->GetYaxis()->SetTitle("E_{raw}/E_{true}");
   p_RC_phi->SetTitle("");
@@ -684,7 +686,7 @@ TCut selcut;
   std::cout<<"_"<<EEorEB<<std::endl;
   printf("corrected curve effSigma= %5f, FWHM=%5f \n",effsigma_cor, fwhm_cor);
   printf("raw curve effSigma= %5f FWHM=%5f \n",effsigma_raw, fwhm_raw);
-*/
+
   
 /*  new TCanvas;
   RooPlot *ploteold = testvar.frame(0.6,1.2,100);

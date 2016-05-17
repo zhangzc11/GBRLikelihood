@@ -9,6 +9,7 @@ if __name__ == "__main__":
 	EEorEB = sys.argv[1]
    	gammaID = sys.argv[2]	
 
+	Non20 = sys.argv[3]
 	
 	dobarrel = "false"
 	if EEorEB == "EB":
@@ -18,7 +19,7 @@ if __name__ == "__main__":
 	#os.system("rm -rf "+pwd+"/submit")
 	os.system("mkdir -p "+pwd+"/submit")
 
-	env_script_n = pwd + "/submit/"+EEorEB+"_"+gammaID+".sh"
+	env_script_n = pwd + "/submit/"+EEorEB+"_"+gammaID+"_Non20_"+Non20+".sh"
 	env_script_f = open(env_script_n, 'w')
 	env_script_f.write("#!/bin/bash\n")
  	env_script_f.write("cd " + work_directory + "\n")
@@ -26,8 +27,8 @@ if __name__ == "__main__":
        	env_script_f.write("eval `scramv1 runtime -sh`\n")
        	#env_script_f.write("cmsenv \n")
        	env_script_f.write("date \n")
-       	env_script_f.write("root -q -l -b eregtraining_13TeV_Pi0.C+\\("+dobarrel+",false,"+gammaID+"\\) \n")
-       	env_script_f.write("root -q -l -b eregtesting_13TeV_Pi0.C+\\("+dobarrel+",false,"+gammaID+"\\) \n")
+       	env_script_f.write("root -q -l -b eregtraining_13TeV_Pi0_Non20.C+\\("+dobarrel+",false,"+gammaID+","+Non20+"\\) \n")
+       	env_script_f.write("root -q -l -b eregtesting_13TeV_Pi0_Non20.C+\\("+dobarrel+",false,"+gammaID+","+Non20+"\\) \n")
        	env_script_f.write("date \n")
 
 	changePermission = subprocess.Popen(['chmod 777 ' + env_script_n], stdout=subprocess.PIPE, shell=True);

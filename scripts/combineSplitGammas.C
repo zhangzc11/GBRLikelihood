@@ -1,10 +1,22 @@
 #include <iostream>
 
-void combineGammas()
+void combineSplitGammas()
 {
 	string file_in_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EEEB.root";
-	string file_out_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EEEB_combine.root";
-      
+	string file_out_Name_EB = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB_combine_new.root";
+	string file_out_Name_EE = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EE_combine_new.root";
+
+	string file_out_Name;
+	
+	bool doEE = false;      
+	if (doEE)
+	{
+		file_out_Name = file_out_Name_EE;
+	}
+	else
+	{
+		file_out_Name = file_out_Name_EB;
+	}
       Float_t Op_enG1_rec;
       Float_t Op_enG2_rec;
       //Float_t Op_DeltaRG1G2;
@@ -187,6 +199,8 @@ void combineGammas()
 
 	for(int i=0;i<N_Entries_Pi0;i++)
 	{
+//		if(i%20==0)
+		
 	      	tree_in->GetEntry(i);
 		//gamma1
 	       	Op_enG_rec 		=  Op_enG1_rec;
@@ -217,8 +231,18 @@ void combineGammas()
 			{
 				Op_isMerging = 1;
 			}
+		if(doEE && (Op_Eta_1 > 1.47 || Op_Eta_1 < -1.47) && (Op_Eta_2 > 1.47 || Op_Eta_2 < -1.47))
+		{
 		Tree_Optim_gamma->Fill();	
 		Tree_Optim_gamma1->Fill();	
+		}
+		if((!doEE) && (Op_Eta_1<1.47) && (Op_Eta_1>-1.47) && (Op_Eta_2<1.47) &&(Op_Eta_2>-1.47) )//&& Op_Eta < 1.47 && Op_Eta> -1.47)
+		{
+		Tree_Optim_gamma->Fill();	
+		Tree_Optim_gamma1->Fill();	
+		}
+		
+
 		//gamma2
 	       	Op_enG_rec 		=  Op_enG2_rec;
 	 //      	Op_DeltaRG1G2_common 	=  Op_DeltaRG1G2;
@@ -241,8 +265,17 @@ void combineGammas()
 	       	Op_iEta_on2520		=  Op_iEta_2on2520;
 	       	Op_iPhi_on20		=  Op_iPhi_2on20;
 
-		Tree_Optim_gamma->Fill();		
-		Tree_Optim_gamma2->Fill();		
+		if(doEE && (Op_Eta_1 > 1.47 || Op_Eta_1 < -1.47) && (Op_Eta_2 > 1.47 || Op_Eta_2 < -1.47))
+		{
+		Tree_Optim_gamma->Fill();	
+		Tree_Optim_gamma2->Fill();	
+		}
+		if((!doEE) && (Op_Eta_1<1.47) && (Op_Eta_1>-1.47) && (Op_Eta_2<1.47) &&(Op_Eta_2>-1.47) )//&& Op_Eta < 1.47 && Op_Eta> -1.47)
+		{
+		Tree_Optim_gamma->Fill();	
+		Tree_Optim_gamma2->Fill();	
+		}
+			
 	}
 	Tree_Optim_gamma->Write();	
 	Tree_Optim_gamma1->Write();	

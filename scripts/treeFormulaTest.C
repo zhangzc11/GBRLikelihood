@@ -1,9 +1,9 @@
 #include <iostream>
 
-void combineGammas()
+void treeFormulaTest()
 {
-	string file_in_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EEEB.root";
-	string file_out_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EEEB_combine.root";
+	string file_in_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB.root";
+	string file_out_Name = "/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/sum_Pi0Gun_Flat0to50bx25_EB_combine.root";
       
       Float_t Op_enG1_rec;
       Float_t Op_enG2_rec;
@@ -66,13 +66,15 @@ void combineGammas()
       Int_t Op_iPhi_on2;
       Int_t Op_iEta_on2520;
       Int_t Op_iPhi_on20;
-      Int_t Op_isMerging;
 
+
+      double Op_enG12_rec;
 
 	TFile *f_in = new TFile(file_in_Name.c_str(),"READ"); 
 	TTree *tree_in = (TTree*)f_in->Get("Tree_Optim");
 
         tree_in->SetBranchAddress( "STr2_enG1_rec",      &Op_enG1_rec);//,         "STr2_enG1_rec[STr2_NPi0_rec]/F");
+        tree_in->SetBranchAddress( "STr2_enG1_rec/STr2_enG2_rec",      &Op_enG12_rec);//,         "STr2_enG1_rec[STr2_NPi0_rec]/F");
         tree_in->SetBranchAddress( "STr2_enG2_rec",      &Op_enG2_rec);//,         "STr2_enG2_rec[STr2_NPi0_rec]/F");
         tree_in->SetBranchAddress( "STr2_enG1_nocor",    &Op_enG1_nocor);//,       "STr2_enG1_nocor[STr2_NPi0_rec]/F");
         tree_in->SetBranchAddress( "STr2_enG2_nocor",    &Op_enG2_nocor);//,       "STr2_enG2_nocor[STr2_NPi0_rec]/F");
@@ -114,7 +116,7 @@ void combineGammas()
 
 	
 	int N_Entries_Pi0 = tree_in->GetEntries();
-
+/*
 	TFile *f_out = new TFile(file_out_Name.c_str(),"RECREATE");
 	Tree_Optim_gamma = new TTree("Tree_Optim_gamma","Output TTree gamma");
 	Tree_Optim_gamma->Branch( "STr2_enG_rec",      &Op_enG_rec,         "STr2_enG_rec/F");
@@ -137,7 +139,6 @@ void combineGammas()
         Tree_Optim_gamma->Branch( "STr2_iPhi_on2",     &Op_iPhi_on2,        "STr2_iPhi_on2/I");
         Tree_Optim_gamma->Branch( "STr2_iEta_on2520",  &Op_iEta_on2520,     "STr2_iEta_on2520/I");
         Tree_Optim_gamma->Branch( "STr2_iPhi_on20",    &Op_iPhi_on20,       "STr2_iPhi_on20/I");
-        Tree_Optim_gamma->Branch( "STr2_isMerging",    &Op_isMerging,       "STr2_isMerging/I");
 
 	Tree_Optim_gamma1 = new TTree("Tree_Optim_gamma1","Output TTree gamma1");
 	Tree_Optim_gamma1->Branch( "STr2_enG_rec",      &Op_enG_rec,         "STr2_enG_rec/F");
@@ -160,8 +161,7 @@ void combineGammas()
         Tree_Optim_gamma1->Branch( "STr2_iPhi_on2",     &Op_iPhi_on2,        "STr2_iPhi_on2/I");
         Tree_Optim_gamma1->Branch( "STr2_iEta_on2520",  &Op_iEta_on2520,     "STr2_iEta_on2520/I");
         Tree_Optim_gamma1->Branch( "STr2_iPhi_on20",    &Op_iPhi_on20,       "STr2_iPhi_on20/I");
-        Tree_Optim_gamma1->Branch( "STr2_isMerging",    &Op_isMerging,       "STr2_isMerging/I");
-	
+
 	Tree_Optim_gamma2 = new TTree("Tree_Optim_gamma2","Output TTree gamma2");
 	Tree_Optim_gamma2->Branch( "STr2_enG_rec",      &Op_enG_rec,         "STr2_enG_rec/F");
         Tree_Optim_gamma2->Branch( "STr2_enG_nocor",    &Op_enG_nocor,       "STr2_enG_nocor/F");
@@ -183,70 +183,14 @@ void combineGammas()
         Tree_Optim_gamma2->Branch( "STr2_iPhi_on2",     &Op_iPhi_on2,        "STr2_iPhi_on2/I");
         Tree_Optim_gamma2->Branch( "STr2_iEta_on2520",  &Op_iEta_on2520,     "STr2_iEta_on2520/I");
         Tree_Optim_gamma2->Branch( "STr2_iPhi_on20",    &Op_iPhi_on20,       "STr2_iPhi_on20/I");
-        Tree_Optim_gamma2->Branch( "STr2_isMerging",    &Op_isMerging,       "STr2_isMerging/I");
+*/
 
 	for(int i=0;i<N_Entries_Pi0;i++)
 	{
 	      	tree_in->GetEntry(i);
-		//gamma1
-	       	Op_enG_rec 		=  Op_enG1_rec;
-	//       	Op_DeltaRG1G2_common 	=  Op_DeltaRG1G2;
-	      	Op_Es_e1 		=  Op_Es_e1_1;
-	       	Op_Es_e2 		=  Op_Es_e2_1;
-	       	Op_S4S9 		=  Op_S4S9_1;
-	       	Op_S1S9 		=  Op_S1S9_1;
-	       	Op_S2S9			=  Op_S2S9_1;
-	       	Op_Eta 			=  Op_Eta_1;
-	       	Op_Phi 			=  Op_Phi_1;
-	       	Op_Time 		=  Op_Time_1;
-	       	Op_DeltaR 		=  Op_DeltaR_1;
-	       	Op_enG_nocor 		=  Op_enG1_nocor;
-	       	Op_enG_true 		=  Op_enG1_true;
-	       	Op_Nxtal 		=  Op_Nxtal_1;
-	       	Op_iEtaiX		=  Op_iEtaiX_1;
-	       	Op_iPhiiY		=  Op_iPhiiY_1;
-	       	Op_iEta_on5		=  Op_iEta_1on5;
-	       	Op_iPhi_on2		=  Op_iPhi_1on2;
-	       	Op_iEta_on2520		=  Op_iEta_1on2520;
-	       	Op_iPhi_on20		=  Op_iPhi_1on20;
-		if((abs(Op_iEtaiX_1-Op_iEtaiX_2)<=2) && (abs(Op_iPhiiY_1-Op_iPhiiY_2)<=2))
-			{
-				Op_isMerging = 999;
-			}
-		else
-			{
-				Op_isMerging = 1;
-			}
-		Tree_Optim_gamma->Fill();	
-		Tree_Optim_gamma1->Fill();	
-		//gamma2
-	       	Op_enG_rec 		=  Op_enG2_rec;
-	 //      	Op_DeltaRG1G2_common 	=  Op_DeltaRG1G2;
-	      	Op_Es_e1 		=  Op_Es_e1_2;
-	       	Op_Es_e2 		=  Op_Es_e2_2;
-	       	Op_S4S9 		=  Op_S4S9_2;
-	       	Op_S1S9 		=  Op_S1S9_2;
-	       	Op_S2S9			=  Op_S2S9_2;
-	       	Op_Eta 			=  Op_Eta_2;
-	       	Op_Phi 			=  Op_Phi_2;
-	       	Op_Time 		=  Op_Time_2;
-	       	Op_DeltaR 		=  Op_DeltaR_2;
-	       	Op_enG_nocor 		=  Op_enG2_nocor;
-	       	Op_enG_true 		=  Op_enG2_true;
-	       	Op_Nxtal 		=  Op_Nxtal_2;
-	       	Op_iEtaiX		=  Op_iEtaiX_2;
-	       	Op_iPhiiY		=  Op_iPhiiY_2;
-	       	Op_iEta_on5		=  Op_iEta_2on5;
-	       	Op_iPhi_on2		=  Op_iPhi_2on2;
-	       	Op_iEta_on2520		=  Op_iEta_2on2520;
-	       	Op_iPhi_on20		=  Op_iPhi_2on20;
+		cout<<Op_enG1_rec<<"      "<<Op_enG2_rec<<"   "<<Op_enG12_rec<<endl;
 
-		Tree_Optim_gamma->Fill();		
-		Tree_Optim_gamma2->Fill();		
+
 	}
-	Tree_Optim_gamma->Write();	
-	Tree_Optim_gamma1->Write();	
-	Tree_Optim_gamma2->Write();	
-
 
 }
