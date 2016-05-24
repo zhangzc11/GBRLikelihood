@@ -280,7 +280,7 @@ void eregtraining_13TeV_Pi0_Non20(bool dobarrel=true, bool doele=false, int gamm
   
   //training selection cut
   ///////////////////////////////zzc, photon gen pt?
-  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2)";// && (STr2_S4S9 < 0.999) && (STr2_S2S9 < 0.999)";
+  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.05)";// && (STr2_S4S9 < 0.999) && (STr2_S2S9 < 0.999)";
 /*
   if (dobarrel) {
     selcut = "ph.genpt>0.5 && ph.isbarrel && ph.ispromptgen"; 

@@ -230,7 +230,8 @@ void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false,int gammaID=0) {
   
   //selection cuts for testing
   //TCut selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1>0.75)";
-  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2)";
+  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03)";
+  //TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_DeltaR < 0.03)";
 //  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_S4S9 < 0.999) && (STr2_S2S9 < 0.999)";
 /*  
 TCut selcut;
@@ -662,7 +663,7 @@ TCut selcut;
   p_CC_phi->GetYaxis()->SetRangeUser(0.84,1.06);
   if(EEorEB == "EB")
   {
-   p_CC_phi->GetYaxis()->SetRangeUser(0.91,1.00);
+   p_CC_phi->GetYaxis()->SetRangeUser(0.94,1.00);
   }
   p_CC_phi->GetYaxis()->SetTitle("E_{cor}/E_{true}");
   p_CC_phi->SetTitle("");
@@ -673,7 +674,7 @@ TCut selcut;
   p_RC_phi->GetYaxis()->SetRangeUser(0.82,1.04);
   if(EEorEB=="EB")
   {
-   p_RC_phi->GetYaxis()->SetRangeUser(0.86,0.95);
+   p_RC_phi->GetYaxis()->SetRangeUser(0.89,0.95);
   }
   p_RC_phi->GetYaxis()->SetTitle("E_{raw}/E_{true}");
   p_RC_phi->SetTitle("");

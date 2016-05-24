@@ -132,7 +132,7 @@ Double_t effSigma(TH1 * hist)
   
 }
 
-void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false,int gammaID=0) {
+void eregtesting_13TeV_Pi0_lessP(bool dobarrel=true, bool doele=false,int gammaID=0) {
   
   //output dir
   TString EEorEB = "EE";
@@ -149,8 +149,7 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false,int gam
   {
    gammaDir = "gamma2";
   }
-  TString dirname = TString::Format("ereg_test_plots_pi0/%s_%s",gammaDir.Data(),EEorEB.Data());
-
+  TString dirname = TString::Format("ereg_test_plots/%s_%s",gammaDir.Data(),EEorEB.Data());
   
   gSystem->mkdir(dirname,true);
   gSystem->cd(dirname);    
@@ -166,7 +165,7 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false,int gam
   else if (!doele && !dobarrel) 
     fname = "wereg_ph_ee.root";
   
-  TString infile = TString::Format("../../ereg_ws_pi0/%s/%s",gammaDir.Data(),fname.Data());
+  TString infile = TString::Format("../../ereg_ws/%s/%s",gammaDir.Data(),fname.Data());
   
   TFile *fws = TFile::Open(infile); 
   RooWorkspace *ws = (RooWorkspace*)fws->Get("wereg");
@@ -230,10 +229,9 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false,int gam
   }
   
   //selection cuts for testing
-//  TCut selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1>0.75)";
-  //TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2)";
-  TCut selcut = "(STr2_isMerging < 2)";
-
+  //TCut selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1>0.75)";
+  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.05)";
+//  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_S4S9 < 0.999) && (STr2_S2S9 < 0.999)";
 /*  
 TCut selcut;
   if (dobarrel) 
@@ -279,32 +277,21 @@ TCut selcut;
   RooAbsPdf *sigpdf = ws->pdf("sigpdf");
   
   //input variable corresponding to sceta
-  RooRealVar *abs_erawvar = ws->var("var_0");
-  RooRealVar *S4S9var = ws->var("var_4");
-  RooRealVar *DeltaRvar = ws->var("var_6");
+////  RooRealVar *scetavar = ws->var("var_1");
+////  RooRealVar *scphivar = ws->var("var_2");
   
-  RooRealVar *scetavar = ws->var("var_1");
-  RooRealVar *scphivar = ws->var("var_2");
-  
-  RooRealVar *scetaiXvar = ws->var("var_7");
-  RooRealVar *scphiiYvar = ws->var("var_8");
-  
+ 
   //regressed output functions
   RooAbsReal *sigmeanlim = ws->function("sigmeanlim");
   RooAbsReal *sigwidthlim = ws->function("sigwidthlim");
   RooAbsReal *signlim = ws->function("signlim");
   RooAbsReal *sign2lim = ws->function("sign2lim");
-  //cout<<"Function of sigmeanlim:  "<<sigmeanlim->getTitle()<<endl;
-
 
   //formula for corrected energy/true energy ( 1.0/(etrue/eraw) * regression mean)
   RooFormulaVar ecor("ecor","","1./(@0)*@1",RooArgList(*tgtvar,*sigmeanlim));
   RooRealVar *ecorvar = (RooRealVar*)hdata->addColumn(ecor);
   ecorvar->setRange(0.,2.);
   ecorvar->setBins(800);
-  
-  RooFormulaVar abs_ecor("abs_ecor","","1.*@0*@1",RooArgList(*abs_erawvar,*sigmeanlim));
-  RooRealVar *abs_ecorvar = (RooRealVar*)hdata->addColumn(abs_ecor);
   
   //formula for raw energy/true energy (1.0/(etrue/eraw))
   RooFormulaVar raw("raw","","1./@0",RooArgList(*tgtvar));
@@ -318,97 +305,7 @@ TCut selcut;
   RooRealVar *widthvar = (RooRealVar*)hdataclone->addColumn(*sigwidthlim);
   RooRealVar *nvar = (RooRealVar*)hdataclone->addColumn(*signlim);
   RooRealVar *n2var = (RooRealVar*)hdataclone->addColumn(*sign2lim);
- 
-//get pi0 mass peak from the data
-	TH1F *hraw_pi0_mass = new TH1F("raw_m_pi0", "raw_m_pi0", 800,0.0,0.26);
-	TH1F *hcor_pi0_mass = new TH1F("cor_m_pi0", "cor_m_pi0", 800,0.0,0.26);
-	const RooArgSet* set;
-    	int entries=hdata->numEntries();
-	double eta_val[2], phi_val[2], eraw_val[2], ecor_val[2], S4S9_val[2], DeltaR_val[2], massraw_pi0, masscor_pi0;
-	cout<<"Total number of photons: "<<entries<<endl;
-	bool passCut[2] = {false,false};
- 	for(int i=0;i<entries;i++)
-	{
-		set = hdata->get(i);
-		S4S9var = (RooRealVar*)set->find(S4S9var->GetName());
-		DeltaRvar = (RooRealVar*)set->find(DeltaRvar->GetName());
-		scetavar = (RooRealVar*)set->find(scetavar->GetName());
-		scphivar = (RooRealVar*)set->find(scphivar->GetName());
-		abs_erawvar = (RooRealVar*)set->find(abs_erawvar->GetName());
-		abs_ecorvar = (RooRealVar*)set->find(abs_ecorvar->GetName());
-		S4S9_val[i%2] = S4S9var->getVal();
-		DeltaR_val[i%2] = DeltaRvar->getVal();
-		eta_val[i%2] = scetavar->getVal();
-		phi_val[i%2] = scphivar->getVal();
-		eraw_val[i%2] = abs_erawvar->getVal();
-		ecor_val[i%2] = abs_ecorvar->getVal();
-		if((eraw_val[i%2]/cosh(eta_val[i%2])>1.0)&&(S4S9_val[i%2]>0.75)&&(DeltaR_val[i%2]<0.03))
-		{
-			passCut[i%2] = true;
-		}
-		else
-		{
-			passCut[i%2] = false;
-		}
-		if((i%2==1)&&(i>0))//&&passCut[0]&&passCut[1])
-		{
-			massraw_pi0 = sqrt(2*eraw_val[0]*eraw_val[1]*(cosh(eta_val[0]-eta_val[1])-cos(phi_val[0]-phi_val[1]))/(cosh(eta_val[0])*cosh(eta_val[1])));
-			masscor_pi0 = sqrt(2*ecor_val[0]*ecor_val[1]*(cosh(eta_val[0]-eta_val[1])-cos(phi_val[0]-phi_val[1]))/(cosh(eta_val[0])*cosh(eta_val[1])));
-	//		cout<<i<<"  eraw: "<<eraw_val[0]<<"  "<<eraw_val[1]<<"   ecor: "<<ecor_val[0]<<"  "<<ecor_val[1]<<"   eta: "<<eta_val[0]<<"   "<<eta_val[1]<<"   phi: "<<phi_val[0]<<"   "<<phi_val[1]    <<"   massraw: "<<massraw_pi0<<"   masscor: "<<masscor_pi0<<endl;
-			hraw_pi0_mass->Fill(massraw_pi0);
-			hcor_pi0_mass->Fill(masscor_pi0);
-		}	
-	}
-  double effsigma_mpi0_cor, effsigma_mpi0_raw, fwhm_mpi0_cor, fwhm_mpi0_raw;
-
-  if(EEorEB == "EE")
-  {
-	hraw_pi0_mass->SetBins(200,0.0,0.26);
-	hcor_pi0_mass->SetBins(200,0.0,0.26);
-  }
-
-  effsigma_mpi0_cor = effSigma(hcor_pi0_mass);
-  fwhm_mpi0_cor = FWHM(hcor_pi0_mass);
-  effsigma_mpi0_raw = effSigma(hraw_pi0_mass);
-  fwhm_mpi0_raw = FWHM(hraw_pi0_mass);
-
-
-//draw pi0 mass peak
-	TH1F *h_theoretical = new TH1F("theo","theo",260000,0.0,0.26);
-	h_theoretical->SetBinContent(134978,1.05*hcor_pi0_mass->GetMaximum());
-
-  hcor_pi0_mass->SetLineColor(kBlue);
-  hraw_pi0_mass->SetLineColor(kMagenta);
-  h_theoretical->SetLineColor(kBlack);
   
-  hcor_pi0_mass->GetXaxis()->SetTitle("m_{#pi_{0}}/GeV");
-  hcor_pi0_mass->GetYaxis()->SetRangeUser(1.0,1.4*hcor_pi0_mass->GetMaximum());
-  hraw_pi0_mass->GetYaxis()->SetRangeUser(1.0,1.4*hcor_pi0_mass->GetMaximum());
-
-  TCanvas *cpi0mass = new TCanvas;
-  gStyle->SetOptStat(0); 
-  hcor_pi0_mass->SetTitle("");
-  hraw_pi0_mass->SetTitle("");
-  hcor_pi0_mass->Draw("HIST");
-  hraw_pi0_mass->Draw("HISTSAME");
-  h_theoretical->Draw("HISTSAME");
-
-  //show errSigma in the plot
-  TLegend *leg_mpi0 = new TLegend(0.1, 0.74, 0.7, 0.9);
-  leg_mpi0->AddEntry(hcor_pi0_mass,Form("m_{#pi_{0}, cor}, #sigma_{eff}=%4.3f, FWHM=%4.3f", effsigma_mpi0_cor, fwhm_mpi0_cor),"l");
-  leg_mpi0->AddEntry(hraw_pi0_mass,Form("m_{#pi_{0}, raw}, #sigma_{eff}=%4.3f, FWHM=%4.3f", effsigma_mpi0_raw, fwhm_mpi0_raw),"l");
-  leg_mpi0->AddEntry(h_theoretical,"m_{#pi_{0}} from PDG (0.135 GeV)","l");
-
-  leg_mpi0->SetFillStyle(0);
-  leg_mpi0->SetBorderSize(0);
-  leg_mpi0->Draw();
-
-  cpi0mass->SaveAs("mpi0.eps");
-  cpi0mass->SetLogy();
-  cpi0mass->SaveAs("mpi0log.eps");
-
-/* 
-//((RooTreeDataStore*)(hdata->store())->tree())->Write(); 
   
   //plot target variable and weighted regression prediction (using numerical integration over reduced testing dataset)
   TCanvas *craw = new TCanvas;
@@ -447,13 +344,16 @@ TCut selcut;
   hdataclone->plotOn(plotn2);
   plotn2->Draw();
   cn2->SaveAs("n2.eps");
-  
+ 
+////
+/* 
   TCanvas *ceta = new TCanvas;
   RooPlot *ploteta = scetavar->frame(-2.6,2.6,200);
   hdataclone->plotOn(ploteta);
   ploteta->Draw();      
   ceta->SaveAs("eta.eps");  
   
+*/
 
   //create histograms for eraw/etrue and ecor/etrue to quantify regression performance
   TH1 *heraw;// = hdata->createHistogram("hraw",*rawvar,Binning(800,0.,2.));
@@ -481,6 +381,12 @@ TCut selcut;
   hecor->GetXaxis()->SetRangeUser(0.0,1.5);
   heraw->GetXaxis()->SetRangeUser(0.0,1.5);
   
+/*if(EEorEB == "EE")
+{
+  heraw->GetYaxis()->SetRangeUser(10.0,200.0);
+  hecor->GetYaxis()->SetRangeUser(10.0,200.0);
+}
+*/ 
  
 //heold->GetXaxis()->SetRangeUser(0.6,1.2);
   double effsigma_cor, effsigma_raw, fwhm_cor, fwhm_raw;
@@ -529,6 +435,8 @@ TCut selcut;
 
   // draw CCs vs eta and phi
 
+//////
+/*
   TCanvas *c_eta = new TCanvas;
   TH1 *h_eta = hdata->createHistogram("h_eta",*scetavar,Binning(100,-3.2,3.2));
   h_eta->Draw("HIST");
@@ -538,26 +446,29 @@ TCut selcut;
   TH1 *h_phi = hdata->createHistogram("h_phi",*scphivar,Binning(100,-3.2,3.2));
   h_phi->Draw("HIST");
   c_phi->SaveAs("hphi.eps");
+*/
 
-
+  RooRealVar *scetaiXvar = ws->var("var_1");
+  RooRealVar *scphiiYvar = ws->var("var_2");
+ 
    if(EEorEB=="EB")
    {
    scetaiXvar->setRange(-90,90);
-   scetaiXvar->setBins(180);
+   scetaiXvar->setBins(1800);
    scphiiYvar->setRange(0,360);
-   scphiiYvar->setBins(360);
+   scphiiYvar->setBins(3600);
    }
    else
    {
    scetaiXvar->setRange(0,50);
-   scetaiXvar->setBins(50);
+   scetaiXvar->setBins(500);
    scphiiYvar->setRange(0,50);
-   scphiiYvar->setBins(50);
+   scphiiYvar->setBins(500);
  
    }
-   ecorvar->setRange(1.2,2.0);
+   ecorvar->setRange(0.5,1.5);
    ecorvar->setBins(100);
-   rawvar->setRange(1.2,2.0);
+   rawvar->setRange(0.5,1.5);
    rawvar->setBins(100);
   
 
@@ -625,7 +536,8 @@ TCut selcut;
 
   TCanvas *myC_variables = new TCanvas;
 
-  RooRealVar *Nxtalvar = ws->var("var_3");
+/////
+/*  RooRealVar *Nxtalvar = ws->var("var_3");
   Nxtalvar->setRange(0,10);
   Nxtalvar->setBins(10);
   TH2F *h_CC_Nxtal = hdata->createHistogram(*Nxtalvar, *ecorvar, "","cor_vs_Nxtal");
@@ -639,7 +551,7 @@ TCut selcut;
   h_RC_Nxtal->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_Nxtal.eps");
 	
-//  RooRealVar *S4S9var = ws->var("var_4");
+  RooRealVar *S4S9var = ws->var("var_4");
   S4S9var->setRange(0.6,1.0);
   S4S9var->setBins(100);
   TH2F *h_CC_S4S9 = hdata->createHistogram(*S4S9var, *ecorvar, "","cor_vs_S4S9");
@@ -652,7 +564,9 @@ TCut selcut;
   h_RC_S4S9->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
   h_RC_S4S9->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_S4S9.eps");
-	 
+*/	
+//////
+/* 
   RooRealVar *S1S9var = ws->var("var_5");
   S1S9var->setRange(0.3,1.0);
   S1S9var->setBins(100);
@@ -666,8 +580,10 @@ TCut selcut;
   h_RC_S1S9->GetYaxis()->SetTitle("E_{raw}/E_{true}"); 
   h_RC_S1S9->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_S1S9.eps");
- 
-  RooRealVar *S2S9var = ws->var("var_6");
+ */
+//////
+/*
+  RooRealVar *S2S9var = ws->var("var_5");
   S2S9var->setRange(0.5,1.0);
   S2S9var->setBins(100);
   TH2F *h_CC_S2S9 = hdata->createHistogram(*S2S9var, *ecorvar, "","cor_vs_S2S9");
@@ -681,7 +597,7 @@ TCut selcut;
   h_RC_S2S9->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_S2S9.eps");
   
-  RooRealVar *DeltaRvar = ws->var("var_7");
+  RooRealVar *DeltaRvar = ws->var("var_6");
   DeltaRvar->setRange(0.0,0.1);
   DeltaRvar->setBins(100);
   TH2F *h_CC_DeltaR = hdata->createHistogram(*DeltaRvar, *ecorvar, "","cor_vs_DeltaR");
@@ -697,7 +613,7 @@ TCut selcut;
 
   if(EEorEB=="EE")
 {
-  RooRealVar *Es_e1var = ws->var("var_10");
+  RooRealVar *Es_e1var = ws->var("var_9");
   Es_e1var->setRange(0.0,200.0);
   Es_e1var->setBins(1000);
   TH2F *h_CC_Es_e1 = hdata->createHistogram(*Es_e1var, *ecorvar, "","cor_vs_Es_e1");
@@ -711,7 +627,7 @@ TCut selcut;
   h_RC_Es_e1->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_Es_e1.eps");
 
-  RooRealVar *Es_e2var = ws->var("var_11");
+  RooRealVar *Es_e2var = ws->var("var_10");
   Es_e2var->setRange(0.0,200.0);
   Es_e2var->setBins(1000);
   TH2F *h_CC_Es_e2 = hdata->createHistogram(*Es_e2var, *ecorvar, "","cor_vs_Es_e2");
@@ -726,12 +642,14 @@ TCut selcut;
   myC_variables->SaveAs("raw_vs_Es_e2.eps");
 
 }
+
+*/
 	
   TProfile *p_CC_eta = h_CC_eta->ProfileX();
-  p_CC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+  p_CC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
   if(EEorEB == "EB")
   {
-   p_CC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+   p_CC_eta->GetYaxis()->SetRangeUser(0.85,1.0);
 //   p_CC_eta->GetXaxis()->SetRangeUser(-1.5,1.5);
   }
   p_CC_eta->GetYaxis()->SetTitle("E_{cor}/E_{true}");
@@ -740,10 +658,10 @@ TCut selcut;
   myC_variables->SaveAs("profile_cor_vs_eta.eps"); 
   
   TProfile *p_RC_eta = h_RC_eta->ProfileX();
-  p_RC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+  p_RC_eta->GetYaxis()->SetRangeUser(0.5,1.5);
   if(EEorEB=="EB")
   {
-   p_RC_eta->GetYaxis()->SetRangeUser(1.2,2.0);
+   p_RC_eta->GetYaxis()->SetRangeUser(0.80,0.95);
   // p_RC_eta->GetXaxis()->SetRangeUser(-1.5,1.5);
   }
   p_RC_eta->GetYaxis()->SetTitle("E_{raw}/E_{true}");
@@ -752,10 +670,10 @@ TCut selcut;
   myC_variables->SaveAs("profile_raw_vs_eta.eps"); 
 
   TProfile *p_CC_phi = h_CC_phi->ProfileX();
-  p_CC_phi->GetYaxis()->SetRangeUser(0.94,1.06);
+  p_CC_phi->GetYaxis()->SetRangeUser(0.84,1.06);
   if(EEorEB == "EB")
   {
-   p_CC_phi->GetYaxis()->SetRangeUser(0.96,1.02);
+   p_CC_phi->GetYaxis()->SetRangeUser(0.91,1.00);
   }
   p_CC_phi->GetYaxis()->SetTitle("E_{cor}/E_{true}");
   p_CC_phi->SetTitle("");
@@ -763,10 +681,10 @@ TCut selcut;
   myC_variables->SaveAs("profile_cor_vs_phi.eps"); 
   
   TProfile *p_RC_phi = h_RC_phi->ProfileX();
-  p_RC_phi->GetYaxis()->SetRangeUser(0.92,1.04);
+  p_RC_phi->GetYaxis()->SetRangeUser(0.82,1.04);
   if(EEorEB=="EB")
   {
-   p_RC_phi->GetYaxis()->SetRangeUser(0.92,0.98);
+   p_RC_phi->GetYaxis()->SetRangeUser(0.86,0.95);
   }
   p_RC_phi->GetYaxis()->SetTitle("E_{raw}/E_{true}");
   p_RC_phi->SetTitle("");
@@ -779,7 +697,8 @@ TCut selcut;
   std::cout<<"_"<<EEorEB<<std::endl;
   printf("corrected curve effSigma= %5f, FWHM=%5f \n",effsigma_cor, fwhm_cor);
   printf("raw curve effSigma= %5f FWHM=%5f \n",effsigma_raw, fwhm_raw);
-*/  
+
+  
 /*  new TCanvas;
   RooPlot *ploteold = testvar.frame(0.6,1.2,100);
   hdatasigtest->plotOn(ploteold);

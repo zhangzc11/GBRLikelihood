@@ -75,11 +75,11 @@ void initweights(TChain *chain, float *xsecs, float lumi) {
   
 }
 
-void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0) {
+void eregtraining_13TeV_Pi0_lessP3(bool dobarrel=true, bool doele=false, int gammaID=0) {
   //gammaID = 0(both gamma), 1(gamma1), 2(gamma2) 
   //output dir
   //TString dirname = "/data/bendavid/eregexampletest/"; 
-  TString dirname = "ereg_ws/bothGammas/";
+  TString dirname = "ereg_ws_PU_lessP_3/bothGammas/";
   if(gammaID == 1)
   {
 	dirname = "ereg_ws/gamma1/";
@@ -134,18 +134,18 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
    	
 	//common for EE and EB
     	varsf->push_back("STr2_enG_nocor");// /cosh(STr2_Eta_1)");
- 	varsf->push_back("STr2_Eta");
-        varsf->push_back("STr2_Phi");
+ 	//varsf->push_back("STr2_Eta");
+        //varsf->push_back("STr2_Phi");
 	   
 	varsf->push_back("STr2_Nxtal");//number of crystals receive a certain portion(?) of energy
     	
     	varsf->push_back("STr2_S4S9");
-//   	varsf->push_back("STr2_S1S9");
+   	//varsf->push_back("STr2_S1S9");
    	varsf->push_back("STr2_S2S9");
     	varsf->push_back("STr2_DeltaR");
 
-	varsf->push_back("STr2_iEtaiX");
-        varsf->push_back("STr2_iPhiiY");
+	//varsf->push_back("STr2_iEtaiX");
+        //varsf->push_back("STr2_iPhiiY");
 	
 
         varseb = new std::vector<std::string>(*varsf);
@@ -159,13 +159,12 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
    	//EB
 	//varseb->push_back("STr2_Eta");
    	//varseb->push_back("STr2_Phi");
-	
+	/*
 	varseb->push_back("STr2_iEta_on5");
    	varseb->push_back("STr2_iPhi_on2");
    	varseb->push_back("STr2_iPhi_on20");
    	varseb->push_back("STr2_iEta_on2520");
-  	
-
+  	*/
 //  varseb->push_back("ph.e5x5seed/ph.eseed");
  
 /* 
@@ -275,8 +274,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   
   //training selection cut
   ///////////////////////////////zzc, photon gen pt?
-  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03)";
-  //TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_DeltaR < 0.03)";
+  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.05)";// && (STr2_S4S9 < 0.999) && (STr2_S2S9 < 0.999)";
 /*
   if (dobarrel) {
     selcut = "ph.genpt>0.5 && ph.isbarrel && ph.ispromptgen"; 
