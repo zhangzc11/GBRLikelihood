@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
 	changePermission = subprocess.Popen(['chmod 777 ' + env_script_n], stdout=subprocess.PIPE, shell=True);
 	debugout = changePermission.communicate()
-	submit_s = 'bsub -q '+queue+' -o ' + pwd + "/submit/"+EEorEB+"_"+gammaID+".log" + ' "source ' + env_script_n + '"'
+	submit_s = 'bsub -q '+queue+' -o ' + pwd + "/submit/"+EEorEB+"_"+gammaID+"_Non20_"+Non20+".log" + ' "source ' + env_script_n + '"'
 	print "[submit_pi0_regression]  '-- " + submit_s
 	submitJobs = subprocess.Popen([submit_s], stdout=subprocess.PIPE, shell=True);
 	output = (submitJobs.communicate()[0]).splitlines()

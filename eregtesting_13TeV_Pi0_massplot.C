@@ -350,7 +350,7 @@ TCut selcut;
 		{
 			passCut[i%2] = false;
 		}
-		if((i%2==1)&&(i>0))//&&passCut[0]&&passCut[1])
+		if((i%2==1)&&(i>0)&&passCut[0]&&passCut[1])
 		{
 			massraw_pi0 = sqrt(2*eraw_val[0]*eraw_val[1]*(cosh(eta_val[0]-eta_val[1])-cos(phi_val[0]-phi_val[1]))/(cosh(eta_val[0])*cosh(eta_val[1])));
 			masscor_pi0 = sqrt(2*ecor_val[0]*ecor_val[1]*(cosh(eta_val[0]-eta_val[1])-cos(phi_val[0]-phi_val[1]))/(cosh(eta_val[0])*cosh(eta_val[1])));
