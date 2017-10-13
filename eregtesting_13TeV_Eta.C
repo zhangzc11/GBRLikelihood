@@ -139,7 +139,7 @@ Double_t effSigma(TH1 * hist)
   
 }
 
-void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false,int gammaID=0) {
+void eregtesting_13TeV_Eta(bool dobarrel=true, bool doele=false,int gammaID=0) {
   
   //output dir
   TString EEorEB = "EE";
@@ -156,11 +156,9 @@ void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false,int gammaID=0) {
   {
    gammaDir = "gamma2";
   }
-  TString dirname = TString::Format("ereg_test_plots_Pi0/%s_%s",gammaDir.Data(),EEorEB.Data());
-  TString dirname_fits = TString::Format("ereg_test_plots_Pi0/%s_%s/fits",gammaDir.Data(),EEorEB.Data());
+  TString dirname = TString::Format("ereg_test_plots_Eta/%s_%s",gammaDir.Data(),EEorEB.Data());
   
   gSystem->mkdir(dirname,true);
-  gSystem->mkdir(dirname_fits,true);
   gSystem->cd(dirname);    
   
   //read workspace from training
@@ -174,7 +172,7 @@ void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false,int gammaID=0) {
   else if (!doele && !dobarrel) 
     fname = "wereg_ph_ee.root";
   
-  TString infile = TString::Format("../../ereg_ws_Pi0/%s/%s",gammaDir.Data(),fname.Data());
+  TString infile = TString::Format("../../ereg_ws_Eta/%s/%s",gammaDir.Data(),fname.Data());
   
   TFile *fws = TFile::Open(infile); 
   RooWorkspace *ws = (RooWorkspace*)fws->Get("wereg");
@@ -202,8 +200,8 @@ void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false,int gammaID=0) {
   }
   else {
     //TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_0_half2.root");
-    TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_20171008_half2.root");
     //TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiEta_FlatPt-1To15/Gun_FlatPt1to15_MultiEta_withPhotonPtFilter_pythia8/photons_22Aug2017_V3_half2.root");
+    TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiEta_FlatPt-1To15/Gun_FlatPt1to15_MultiEtaToGG_withPhotonPtFilter_pythia8/photons_20171008_half2.root");
    	if(gammaID==0)
 	{
 	dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
@@ -224,10 +222,10 @@ void eregtesting_13TeV_Pi0(bool dobarrel=true, bool doele=false,int gammaID=0) {
   //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03)  && (STr2_mPi0_nocor>0.1)";
   //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2)";
   TCut selcut = "";
-  //if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479 && (!STr2_fromPi0)";
-  if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479";
-  //else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479 && (!STr2_fromPi0)";
-  else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479";
+  if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479 && (!STr2_fromPi0)";
+  //if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479";
+  else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479 && (!STr2_fromPi0)";
+  //else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479";
 
   //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03) && (STr2_iEta_on2520==0 || STr2_iPhi_on20==0) ";
   //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03) && (abs(STr2_iEtaiX)<60)";
@@ -514,6 +512,7 @@ TCut selcut;
   
 
   TCanvas *c_cor_eta = new TCanvas;
+
   TH3F *h3_CC_eta_phi = (TH3F*) hdata->createHistogram("var_5,var_4,ecor",(EEorEB=="EB") ? 170 : 100, (EEorEB=="EB") ? 360 : 100,25);
   TProfile2D *h_CC_eta_phi = h3_CC_eta_phi->Project3DProfile();
 
@@ -536,9 +535,7 @@ TCut selcut;
 
   h_CC_eta_phi->Draw("COLZ");
   c_cor_eta->SaveAs("cor_vs_eta_phi.pdf");
-  c_cor_eta->SaveAs("cor_vs_eta_phi.png"); 
-
-
+  c_cor_eta->SaveAs("cor_vs_eta_phi.png");
 
   TH2F *h_CC_eta = hdata->createHistogram(*scetaiXvar, *ecorvar, "","cor_vs_eta");
   if(EEorEB=="EB")
@@ -589,9 +586,8 @@ TCut selcut;
   c_cor_phi->SaveAs("cor_vs_phi.pdf");
   c_cor_phi->SaveAs("cor_vs_phi.png");
  
-//2D map of Eraw/Etrue and Ecor/Etrue of ieta and iphi
-  
   TCanvas *c_raw_eta = new TCanvas;
+
   TH3F *h3_RC_eta_phi = (TH3F*) hdata->createHistogram("var_5,var_4,raw",(EEorEB=="EB") ? 170 : 100, (EEorEB=="EB") ? 360 : 100,25);
   TProfile2D *h_RC_eta_phi = h3_RC_eta_phi->Project3DProfile();
 
@@ -614,8 +610,7 @@ TCut selcut;
 
   h_RC_eta_phi->Draw("COLZ");
   c_raw_eta->SaveAs("raw_vs_eta_phi.pdf");
-  c_raw_eta->SaveAs("raw_vs_eta_phi.png"); 
-
+  c_raw_eta->SaveAs("raw_vs_eta_phi.png");
   TH2F *h_RC_eta = hdata->createHistogram(*scetaiXvar, *rawvar, "","raw_vs_eta");
   if(EEorEB=="EB")
   {
@@ -632,10 +627,6 @@ TCut selcut;
   c_raw_eta->SaveAs("raw_vs_eta.png");
 	
   TCanvas *c_raw_phi = new TCanvas;
-
-
-
-
   TH2F *h_RC_phi = hdata->createHistogram(*scphiiYvar, *rawvar, "","raw_vs_phi"); 
   if(EEorEB=="EB")
   {
@@ -706,7 +697,6 @@ if(EEorEB == "EB")
   h_RC_DeltaRG1G2->Draw("COLZ");
   myC_iCrystal_mod->SaveAs("raw_vs_DeltaRG1G2.pdf");
   myC_iCrystal_mod->SaveAs("raw_vs_DeltaRG1G2.png");
-
 */
 }
 	 
@@ -758,8 +748,6 @@ if(EEorEB == "EB")
   double High_S2S9 = 1.0; 
   S2S9var->setRange(Low_S2S9,High_S2S9);
   S2S9var->setBins(Nbins_S2S9);
-
-
   TH2F *h_CC_S2S9 = hdata->createHistogram(*S2S9var, *ecorvar, "","cor_vs_S2S9");
   h_CC_S2S9->GetXaxis()->SetTitle("S2S9"); 
   h_CC_S2S9->GetYaxis()->SetTitle("E_{cor}/E_{true}"); 
@@ -772,8 +760,6 @@ if(EEorEB == "EB")
   h_RC_S2S9->Draw("COLZ");
   myC_variables->SaveAs("raw_vs_S2S9.pdf");
   myC_variables->SaveAs("raw_vs_S2S9.png");
-
-
 
   TH2F *h_S2S9_eta = hdata->createHistogram(*scetaiXvar, *S2S9var, "","S2S9_vs_eta");
   h_S2S9_eta->GetYaxis()->SetTitle("S2S9"); 
@@ -849,41 +835,40 @@ if(EEorEB == "EB")
   p_CC_eta->Draw();
   myC_variables->SaveAs("profile_cor_vs_eta.pdf"); 
   myC_variables->SaveAs("profile_cor_vs_eta.png"); 
- 
-// fill the E/Etrue vs. eta with each point taken from fits
-  gStyle->SetOptStat(111); 
-  gStyle->SetOptFit(1); 
+
+  gStyle->SetOptStat(111);
+  gStyle->SetOptFit(1);
   TH1F *h1_fit_CC_eta = new TH1F("h1_fit_CC_eta","h1_fit_CC_eta",(EEorEB=="EB") ? 180 : 50,(EEorEB=="EB") ? -90 : 0, (EEorEB=="EB") ? 90 : 50);
 
   for(int ix = 1;ix <= h_CC_eta->GetNbinsX(); ix++)
   {
-	stringstream os_iEta;
-	os_iEta << ((EEorEB=="EB") ? (-90 + ix -1) : (0 + ix -1));
-	string ss_iEta = os_iEta.str();
-	TH1D * h_temp = h_CC_eta->ProjectionY("h_temp",ix,ix);	
-	h_temp->Rebin(4);
-	TF1 *f_temp = new TF1("f_temp","gaus(0)",0.95,1.07);
-	h_temp->Fit("f_temp","R");
-	h1_fit_CC_eta->SetBinContent(ix, f_temp->GetParameter(1));
-	h1_fit_CC_eta->SetBinError(ix, f_temp->GetParError(1));
+        stringstream os_iEta;
+        os_iEta << ((EEorEB=="EB") ? (-90 + ix -1) : (0 + ix -1));
+        string ss_iEta = os_iEta.str();
+        TH1D * h_temp = h_CC_eta->ProjectionY("h_temp",ix,ix);
+        h_temp->Rebin(4);
+        TF1 *f_temp = new TF1("f_temp","gaus(0)",0.95,1.07);
+        h_temp->Fit("f_temp","R");
+        h1_fit_CC_eta->SetBinContent(ix, f_temp->GetParameter(1));
+        h1_fit_CC_eta->SetBinError(ix, f_temp->GetParError(1));
 	h_temp->GetXaxis()->SetTitle("E_{cor}/E_{true}");
-	h_temp->SetTitle("");
-	h_temp->Draw();
-	myC_variables->SaveAs(("fits/CC_iEta_"+ss_iEta+".pdf").c_str());
-	myC_variables->SaveAs(("fits/CC_iEta_"+ss_iEta+".png").c_str());
-	myC_variables->SaveAs(("fits/CC_iEta_"+ss_iEta+".C").c_str());
+        h_temp->SetTitle("");
+        h_temp->Draw();
+        myC_variables->SaveAs(("fits/CC_iEta_"+ss_iEta+".pdf").c_str());
+        myC_variables->SaveAs(("fits/CC_iEta_"+ss_iEta+".png").c_str());
+        myC_variables->SaveAs(("fits/CC_iEta_"+ss_iEta+".C").c_str());
   }
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(0);
-  h1_fit_CC_eta->GetYaxis()->SetRangeUser((gammaID==1) ? 0.95 : 0.9 , (gammaID==1) ? 1.05 : 1.1);
+  h1_fit_CC_eta->GetYaxis()->SetRangeUser(0.95,1.05);
   h1_fit_CC_eta->GetYaxis()->SetTitle("E_{cor}/E_{true}");
   h1_fit_CC_eta->GetXaxis()->SetTitle((EEorEB=="EB") ? "i#eta" : "iX");
   h1_fit_CC_eta->SetTitle("");
   h1_fit_CC_eta->Draw();
-  myC_variables->SaveAs("profile_fit_cor_vs_eta.pdf");	
-  myC_variables->SaveAs("profile_fit_cor_vs_eta.png");	
-  myC_variables->SaveAs("profile_fit_cor_vs_eta.C");	
-
+  myC_variables->SaveAs("profile_fit_cor_vs_eta.pdf");
+  myC_variables->SaveAs("profile_fit_cor_vs_eta.png");
+  myC_variables->SaveAs("profile_fit_cor_vs_eta.C");
+ 
  
   TProfile *p_RC_eta = h_RC_eta->ProfileX("p_RC_eta");//,1,-1,"s");
   p_RC_eta->GetYaxis()->SetRangeUser(0.8,1.05);
@@ -898,43 +883,41 @@ if(EEorEB == "EB")
   myC_variables->SaveAs("profile_raw_vs_eta.pdf"); 
   myC_variables->SaveAs("profile_raw_vs_eta.png"); 
 
-// fill the E/Etrue vs. eta with each point taken from fits
   gStyle->SetOptStat(111);
   gStyle->SetOptFit(1);
   TH1F *h1_fit_RC_eta = new TH1F("h1_fit_RC_eta","h1_fit_RC_eta",(EEorEB=="EB") ? 180 : 50,(EEorEB=="EB") ? -90 : 0, (EEorEB=="EB") ? 90 : 50);
   for(int ix = 1;ix <= h_RC_eta->GetNbinsX(); ix++)
   {
-	stringstream os_iEta;
-	os_iEta << ((EEorEB=="EB") ? (-90 + ix -1) : (0 + ix -1));
-	string ss_iEta = os_iEta.str();
-	TH1D * h_temp = h_RC_eta->ProjectionY("h_temp",ix,ix);	
-	h_temp->Rebin(4);
-	TF1 *f_temp = new TF1("f_temp","gaus(0)",0.87,1.05);
-	h_temp->Fit("f_temp","R");
-	
-	h1_fit_RC_eta->SetBinContent(ix, f_temp->GetParameter(1));
-	h1_fit_RC_eta->SetBinError(ix, f_temp->GetParError(1));
-	
-	h_temp->GetXaxis()->SetTitle("E_{raw}/E_{true}");
-	h_temp->SetTitle("");
+        stringstream os_iEta;
+        os_iEta << ((EEorEB=="EB") ? (-90 + ix -1) : (0 + ix -1));
+        string ss_iEta = os_iEta.str();
+        TH1D * h_temp = h_RC_eta->ProjectionY("h_temp",ix,ix);
+        h_temp->Rebin(4);
+        TF1 *f_temp = new TF1("f_temp","gaus(0)",0.87,1.05);
+        h_temp->Fit("f_temp","R");
 
-	h_temp->Draw();
-	
-	myC_variables->SaveAs(("fits/RC_iEta_"+ss_iEta+".pdf").c_str());
-	myC_variables->SaveAs(("fits/RC_iEta_"+ss_iEta+".png").c_str());
-	myC_variables->SaveAs(("fits/RC_iEta_"+ss_iEta+".C").c_str());
+        h1_fit_RC_eta->SetBinContent(ix, f_temp->GetParameter(1));
+        h1_fit_RC_eta->SetBinError(ix, f_temp->GetParError(1));
+	h_temp->GetXaxis()->SetTitle("E_{raw}/E_{true}");
+        h_temp->SetTitle("");
+        h_temp->Draw();
+
+        myC_variables->SaveAs(("fits/RC_iEta_"+ss_iEta+".pdf").c_str());
+        myC_variables->SaveAs(("fits/RC_iEta_"+ss_iEta+".png").c_str());
+        myC_variables->SaveAs(("fits/RC_iEta_"+ss_iEta+".C").c_str());
   }
 
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(0);
-  h1_fit_RC_eta->GetYaxis()->SetRangeUser((gammaID==1) ? 0.9 : 0.8,1.0);
+  h1_fit_RC_eta->GetYaxis()->SetRangeUser(0.9,1.0);
   h1_fit_RC_eta->GetYaxis()->SetTitle("E_{raw}/E_{true}");
   h1_fit_RC_eta->GetXaxis()->SetTitle((EEorEB=="EB") ? "i#eta" : "iX");
   h1_fit_RC_eta->SetTitle("");
   h1_fit_RC_eta->Draw();
-  myC_variables->SaveAs("profile_fit_raw_vs_eta.pdf");	
-  myC_variables->SaveAs("profile_fit_raw_vs_eta.png");	
-  myC_variables->SaveAs("profile_fit_raw_vs_eta.C");	
+  myC_variables->SaveAs("profile_fit_raw_vs_eta.pdf");
+  myC_variables->SaveAs("profile_fit_raw_vs_eta.png");
+  myC_variables->SaveAs("profile_fit_raw_vs_eta.C");
+
 
 
   int Nbins_iEta = EEorEB=="EB" ? 180 : 50;
@@ -966,7 +949,7 @@ if(EEorEB == "EB")
   myC_variables->SaveAs("sigma_Ecor_Etrue_vs_eta.png");
  
   TProfile *p_CC_phi = h_CC_phi->ProfileX("p_CC_phi");//,1,-1,"s");
-  p_CC_phi->GetYaxis()->SetRangeUser( (gammaID==1) ? 0.9 :  0.8,1.0);
+  p_CC_phi->GetYaxis()->SetRangeUser(0.9,1.0);
   if(EEorEB == "EB")
   {
 //   p_CC_phi->GetYaxis()->SetRangeUser(0.94,1.00);
@@ -993,7 +976,7 @@ if(EEorEB == "EB")
         h1_fit_CC_phi->SetBinContent(ix, f_temp->GetParameter(1));
         h1_fit_CC_phi->SetBinError(ix, f_temp->GetParError(1));
 	h_temp->GetXaxis()->SetTitle("E_{cor}/E_{true}");
-	h_temp->SetTitle("");
+        h_temp->SetTitle("");
         h_temp->Draw();
 
         myC_variables->SaveAs(("fits/CC_iPhi_"+ss_iPhi+".pdf").c_str());
@@ -1003,7 +986,7 @@ if(EEorEB == "EB")
 
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(0);
-  h1_fit_CC_phi->GetYaxis()->SetRangeUser((gammaID==1) ? 0.95 : 0.9,(gammaID==1) ? 1.05 : 1.1);
+  h1_fit_CC_phi->GetYaxis()->SetRangeUser(0.95,1.05);
   h1_fit_CC_phi->GetYaxis()->SetTitle("E_{cor}/E_{true}");
   h1_fit_CC_phi->GetXaxis()->SetTitle((EEorEB=="EB") ? "i#phi" : "iX");
   h1_fit_CC_phi->SetTitle("");
@@ -1012,9 +995,10 @@ if(EEorEB == "EB")
   myC_variables->SaveAs("profile_fit_cor_vs_phi.png");
   myC_variables->SaveAs("profile_fit_cor_vs_phi.C");
 
+
  
   TProfile *p_RC_phi = h_RC_phi->ProfileX("p_RC_phi");//,1,-1,"s");
-  p_RC_phi->GetYaxis()->SetRangeUser((gammaID==1) ? 0.9 : 0.8,1.0);
+  p_RC_phi->GetYaxis()->SetRangeUser(0.8,0.9);
   if(EEorEB=="EB")
   {
  //  p_RC_phi->GetYaxis()->SetRangeUser(0.89,0.95);
@@ -1024,6 +1008,7 @@ if(EEorEB == "EB")
   p_RC_phi->Draw();
   myC_variables->SaveAs("profile_raw_vs_phi.pdf"); 
   myC_variables->SaveAs("profile_raw_vs_phi.png"); 
+
 
   gStyle->SetOptStat(111);
   gStyle->SetOptFit(1);
@@ -1041,8 +1026,7 @@ if(EEorEB == "EB")
         h1_fit_RC_phi->SetBinContent(ix, f_temp->GetParameter(1));
         h1_fit_RC_phi->SetBinError(ix, f_temp->GetParError(1));
 	h_temp->GetXaxis()->SetTitle("E_{raw}/E_{true}");
-	h_temp->SetTitle("");
-
+        h_temp->SetTitle("");
         h_temp->Draw();
 
         myC_variables->SaveAs(("fits/RC_iPhi_"+ss_iPhi+".pdf").c_str());
@@ -1052,7 +1036,7 @@ if(EEorEB == "EB")
 
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(0);
-  h1_fit_RC_phi->GetYaxis()->SetRangeUser((gammaID==1) ? 0.9 : 0.8,1.0);
+  h1_fit_RC_phi->GetYaxis()->SetRangeUser(0.9,1.0);
   h1_fit_RC_phi->GetYaxis()->SetTitle("E_{raw}/E_{true}");
   h1_fit_RC_phi->GetXaxis()->SetTitle((EEorEB=="EB") ? "i#phi" : "iX");
   h1_fit_RC_phi->SetTitle("");
@@ -1060,7 +1044,6 @@ if(EEorEB == "EB")
   myC_variables->SaveAs("profile_fit_raw_vs_phi.pdf");
   myC_variables->SaveAs("profile_fit_raw_vs_phi.png");
   myC_variables->SaveAs("profile_fit_raw_vs_phi.C");
-
 
 
   int Nbins_iPhi = EEorEB=="EB" ? 360 : 50;
@@ -1130,7 +1113,6 @@ if(EEorEB == "EB")
     h1_FoverS_CC_phi->SetBinContent(i, FWHMoverSigmaEff); 
   }
   
-  h1_FoverS_CC_phi->GetXaxis()->SetRangeUser(0,2.0);
   h1_FoverS_CC_phi->GetXaxis()->SetTitle("i#phi");
   h1_FoverS_CC_phi->GetYaxis()->SetTitle("FWHM/#sigma_{eff} of E_{cor}/E_{true}");
   h1_FoverS_CC_phi->SetTitle("");
@@ -1138,7 +1120,6 @@ if(EEorEB == "EB")
   myC_variables->SaveAs("FoverS_Ecor_Etrue_vs_phi.pdf");
   myC_variables->SaveAs("FoverS_Ecor_Etrue_vs_phi.png");
 
-  h1_FoverS_RC_phi->GetXaxis()->SetRangeUser(0,2.0);
   h1_FoverS_RC_phi->GetXaxis()->SetTitle("i#phi");
   h1_FoverS_RC_phi->GetYaxis()->SetTitle("FWHM/#sigma_{eff} of E_{raw}/E_{true}");
   h1_FoverS_RC_phi->SetTitle("");
@@ -1170,7 +1151,6 @@ if(EEorEB == "EB")
     h1_FoverS_CC_eta->SetBinContent(i, FWHMoverSigmaEff); 
   }
   
-  h1_FoverS_CC_eta->GetXaxis()->SetRangeUser(0,2.0);
   h1_FoverS_CC_eta->GetXaxis()->SetTitle("i#eta");
   h1_FoverS_CC_eta->GetYaxis()->SetTitle("FWHM/#sigma_{eff} of E_{cor}/E_{true}");
   h1_FoverS_CC_eta->SetTitle("");
@@ -1178,7 +1158,6 @@ if(EEorEB == "EB")
   myC_variables->SaveAs("FoverS_Ecor_Etrue_vs_eta.pdf");
   myC_variables->SaveAs("FoverS_Ecor_Etrue_vs_eta.png");
 
-  h1_FoverS_RC_eta->GetXaxis()->SetRangeUser(0,2.0);
   h1_FoverS_RC_eta->GetXaxis()->SetTitle("i#eta");
   h1_FoverS_RC_eta->GetYaxis()->SetTitle("FWHM/#sigma_{eff} of E_{raw}/E_{true}");
   h1_FoverS_RC_eta->SetTitle("");
@@ -1212,7 +1191,7 @@ if(EEorEB == "EB")
   
   h1_FoverS_CC_S2S9->GetXaxis()->SetTitle("S2S9");
   h1_FoverS_CC_S2S9->GetYaxis()->SetTitle("FWHM/#sigma_{eff} of E_{cor}/E_{true}");
-  h1_FoverS_CC_S2S9->GetYaxis()->SetRangeUser(0.0,2.0);
+  h1_FoverS_CC_S2S9->GetYaxis()->SetRangeUser(0.0,1.0);
   h1_FoverS_CC_S2S9->SetTitle("");
   h1_FoverS_CC_S2S9->Draw();
   myC_variables->SaveAs("FoverS_Ecor_Etrue_vs_S2S9.pdf");
@@ -1252,7 +1231,7 @@ if(EEorEB == "EB")
   
   h1_FoverS_CC_S4S9->GetXaxis()->SetTitle("S4S9");
   h1_FoverS_CC_S4S9->GetYaxis()->SetTitle("FWHM/#sigma_{eff} of E_{cor}/E_{true}");
-  h1_FoverS_CC_S4S9->GetYaxis()->SetRangeUser(0.0,2.0);
+  h1_FoverS_CC_S4S9->GetYaxis()->SetRangeUser(0.0,1.0);
   h1_FoverS_CC_S4S9->SetTitle("");
   h1_FoverS_CC_S4S9->Draw();
   myC_variables->SaveAs("FoverS_Ecor_Etrue_vs_S4S9.pdf");

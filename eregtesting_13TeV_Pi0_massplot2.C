@@ -132,7 +132,7 @@ Double_t effSigma(TH1 * hist)
   
 }
 
-void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
+void eregtesting_13TeV_Pi0_massplot2(bool dobarrel=true, bool doele=false) {
   
   cout<<"DEBUG ----0000.1"<<endl;
   //output dir
@@ -146,7 +146,7 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
   TString gamma1Dir = "gamma1";
   TString gamma2Dir = "gamma2";
 
-  TString dirname = TString::Format("ereg_test_plots_trainetatestpi0/%s_%s",gammaDir.Data(),EEorEB.Data());
+  TString dirname = TString::Format("ereg_test_plots_trainpi0testpi0/%s_%s",gammaDir.Data(),EEorEB.Data());
 
   
   gSystem->mkdir(dirname,true);
@@ -163,8 +163,8 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
   else if (!doele && !dobarrel) 
     fname = "wereg_ph_ee.root";
   
-  TString infile_gamma1 = TString::Format("../../ereg_ws_Eta/%s/%s",gamma1Dir.Data(),fname.Data());
-  TString infile_gamma2 = TString::Format("../../ereg_ws_Eta/%s/%s",gamma2Dir.Data(),fname.Data());
+  TString infile_gamma1 = TString::Format("../../ereg_ws_Pi0/%s/%s",gamma1Dir.Data(),fname.Data());
+  TString infile_gamma2 = TString::Format("../../ereg_ws_Pi0/%s/%s",gamma2Dir.Data(),fname.Data());
   
   TFile *fws_gamma1 = TFile::Open(infile_gamma1); 
   TFile *fws_gamma2 = TFile::Open(infile_gamma2); 

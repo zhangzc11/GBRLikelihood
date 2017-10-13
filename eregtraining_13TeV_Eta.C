@@ -75,18 +75,18 @@ void initweights(TChain *chain, float *xsecs, float lumi) {
   
 }
 
-void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0) {
+void eregtraining_13TeV_Eta(bool dobarrel=true, bool doele=false, int gammaID=0) {
   //gammaID = 0(both gamma), 1(gamma1), 2(gamma2) 
   //output dir
   //TString dirname = "/data/bendavid/eregexampletest/"; 
-  TString dirname = "ereg_ws_Pi0/bothGammas/";
+  TString dirname = "ereg_ws_Eta/bothGammas/";
   if(gammaID == 1)
   {
-	dirname = "ereg_ws_Pi0/gamma1/";
+	dirname = "ereg_ws_Eta/gamma1/";
   }
   else if (gammaID ==2)
   {
-	dirname = "ereg_ws_Pi0/gamma2/";
+	dirname = "ereg_ws_Eta/gamma2/";
   }
   gSystem->mkdir(dirname,true);
   gSystem->cd(dirname);  
@@ -236,8 +236,8 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
     {
     //tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/ND/PU_Spring16_EB_NoCut3_combine_train.root");      
     //tree->Add("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_0_half1.root");      
-    tree->Add("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_20171008_half1.root");      
     //tree->Add("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiEta_FlatPt-1To15/Gun_FlatPt1to15_MultiEta_withPhotonPtFilter_pythia8/photons_22Aug2017_V3_half1.root");      
+    tree->Add("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiEta_FlatPt-1To15/Gun_FlatPt1to15_MultiEtaToGG_withPhotonPtFilter_pythia8/photons_20171008_half1.root");      
     }
 	cout<<"DEBUG 006..."<<endl; 
     xsecs[0] = 0.001835*81930.0;
@@ -257,10 +257,10 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   ///////////////////////////////zzc, photon gen pt?
   //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03) && (STr2_enG_true/STr2_enG_rec)<3.0 && STr2_EOverEOther < 10.0 && STr2_EOverEOther > 0.1";
   TCut selcut = "";
-  //if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479 && (!STr2_fromPi0)";
-  if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479";
-  //else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479 && (!STr2_fromPi0)";
-  else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479";
+  if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479 && (!STr2_fromPi0)";
+  //if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479";
+  else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479 && (!STr2_fromPi0)";
+  //else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479";
   //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03) && (STr2_enG_true/STr2_enG_rec)<3.0 ";
   //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_DeltaR < 0.03)";
 /*

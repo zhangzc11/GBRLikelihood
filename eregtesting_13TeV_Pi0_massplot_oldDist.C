@@ -132,9 +132,8 @@ Double_t effSigma(TH1 * hist)
   
 }
 
-void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
+void eregtesting_13TeV_Pi0_massplot_oldDist(bool dobarrel=true, bool doele=false,int gammaID=0) {
   
-  cout<<"DEBUG ----0000.1"<<endl;
   //output dir
   TString EEorEB = "EE";
   if(dobarrel)
@@ -142,11 +141,15 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
 	EEorEB = "EB";
 	}
   TString gammaDir = "bothGammas";
-
-  TString gamma1Dir = "gamma1";
-  TString gamma2Dir = "gamma2";
-
-  TString dirname = TString::Format("ereg_test_plots_trainetatestpi0/%s_%s",gammaDir.Data(),EEorEB.Data());
+  if(gammaID==1)
+  {
+   gammaDir = "gamma1";
+  }
+  else if(gammaID==2)
+  {
+   gammaDir = "gamma2";
+  }
+  TString dirname = TString::Format("ereg_test_plots/%s_%s",gammaDir.Data(),EEorEB.Data());
 
   
   gSystem->mkdir(dirname,true);
@@ -163,67 +166,74 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
   else if (!doele && !dobarrel) 
     fname = "wereg_ph_ee.root";
   
-  TString infile_gamma1 = TString::Format("../../ereg_ws_Eta/%s/%s",gamma1Dir.Data(),fname.Data());
-  TString infile_gamma2 = TString::Format("../../ereg_ws_Eta/%s/%s",gamma2Dir.Data(),fname.Data());
+  TString infile = TString::Format("../../ereg_ws/%s/%s",gammaDir.Data(),fname.Data());
   
-  TFile *fws_gamma1 = TFile::Open(infile_gamma1); 
-  TFile *fws_gamma2 = TFile::Open(infile_gamma2); 
-  RooWorkspace *ws_gamma1 = (RooWorkspace*)fws_gamma1->Get("wereg");
-  RooWorkspace *ws_gamma2 = (RooWorkspace*)fws_gamma2->Get("wereg");
-  cout<<"DEBUG ----0000.2"<<endl;
- 
-   
+  TFile *fws = TFile::Open(infile); 
+  RooWorkspace *ws = (RooWorkspace*)fws->Get("wereg");
+  
   //read variables from workspace
-  RooGBRTargetFlex *meantgt_gamma1 = static_cast<RooGBRTargetFlex*>(ws_gamma1->arg("sigmeant"));  
-  RooRealVar *tgtvar_gamma1 = ws_gamma1->var("tgtvar");
-  RooRealVar *scetavar_gamma1 = new RooRealVar("Eta_gamma1","STr2_Eta",0.); 
-  RooRealVar *scphivar_gamma1 = new RooRealVar("Phi_gamma1","STr2_phi",0.); 
-  RooRealVar *scNxtalvar_gamma1 = new RooRealVar("Nxtal_gamma1","STr2_Nxtal",0.); 
-  RooRealVar *scptPi0var_gamma1 = new RooRealVar("ptPi0_gamma1","STr2_ptPi0_nocor",0.); 
-//  RooRealVar *EOverEOthervar = new RooRealVar("EOverEOther","STr2_EOverEOther",0.); 
+  RooGBRTargetFlex *meantgt = static_cast<RooGBRTargetFlex*>(ws->arg("sigmeant"));  
+  RooRealVar *tgtvar = ws->var("tgtvar");
+  RooRealVar *DeltaRvar = new RooRealVar("DeltaR","STr2_DeltaR",0.); 
   
-  RooArgList vars_gamma1;
-  vars_gamma1.add(meantgt_gamma1->FuncVars());
-  vars_gamma1.add(*tgtvar_gamma1);
-  vars_gamma1.add(*scetavar_gamma1);
-  vars_gamma1.add(*scphivar_gamma1);
-  vars_gamma1.add(*scNxtalvar_gamma1);
-  vars_gamma1.add(*scptPi0var_gamma1);
-//  vars.add(*EOverEOthervar);
-   
-  RooGBRTargetFlex *meantgt_gamma2 = static_cast<RooGBRTargetFlex*>(ws_gamma2->arg("sigmeant"));  
-  RooRealVar *tgtvar_gamma2 = ws_gamma2->var("tgtvar");
-  RooRealVar *scetavar_gamma2 = new RooRealVar("Eta_gamma2","STr2_Eta",0.); 
-  RooRealVar *scphivar_gamma2 = new RooRealVar("Phi_gamma2","STr2_phi",0.); 
-  RooRealVar *scNxtalvar_gamma2 = new RooRealVar("Nxtal_gamma2","STr2_Nxtal",0.); 
-  RooRealVar *scptPi0var_gamma2 = new RooRealVar("ptPi0_gamma2","STr2_ptPi0_nocor",0.); 
-//  RooRealVar *EOverEOthervar = new RooRealVar("EOverEOther","STr2_EOverEOther",0.); 
-  
-  RooArgList vars_gamma2;
-  vars_gamma2.add(meantgt_gamma2->FuncVars());
-  vars_gamma2.add(*tgtvar_gamma2);
-  vars_gamma2.add(*scetavar_gamma2);
-  vars_gamma2.add(*scphivar_gamma2);
-  vars_gamma2.add(*scNxtalvar_gamma2);
-  vars_gamma2.add(*scptPi0var_gamma2);
+  RooArgList vars;
+  vars.add(meantgt->FuncVars());
+  vars.add(*tgtvar);
+  vars.add(*DeltaRvar);
    
   //read testing dataset from TTree
-  RooRealVar weightvar_gamma1("weightvar_gamma1","",1.);
-  RooRealVar weightvar_gamma2("weightvar_gamma2","",1.);
+  RooRealVar weightvar("weightvar","",1.);
 
   TTree *dtree;
   
-  //TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_0_half2.root"); 
-  TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_20171008_half2.root"); 
+  if (doele) {
+    //TFile *fdin = TFile::Open("root://eoscms.cern.ch//eos/cms/store/cmst3/user/bendavid/regTreesAug1/hgg-2013Final8TeV_reg_s12-zllm50-v7n_noskim.root");
+    TFile *fdin = TFile::Open("/data/bendavid/regTreesAug1/hgg-2013Final8TeV_reg_s12-zllm50-v7n_noskim.root");
+
+    TDirectory *ddir = (TDirectory*)fdin->FindObjectAny("PhotonTreeWriterSingleInvert");
+    dtree = (TTree*)ddir->Get("hPhotonTreeSingle");       
+  }
+  else {
+    if(dobarrel)
+    {
+    TFile *fdin = TFile::Open("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/ND/PU_Spring16_EB_combine_test.root"); 
+   // TDirectory *ddir = (TDirectory*)fdin->FindObjectAny("PhotonTreeWriterPreselNoSmear");
+	if(gammaID==0)
+	{
 	dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
- 
-
-  cout<<"DEBUG ----0001"<<endl;
-
- 
+	}
+	else if(gammaID==1)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma1");
+	}
+	else if(gammaID==2)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma2");
+	}
+    }      
+   else
+    {
+  TFile *fdin = TFile::Open("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/ND/PU_Spring15_EB_combine.root");
+   // TDirectory *ddir = (TDirectory*)fdin->FindObjectAny("PhotonTreeWriterPreselNoSmear");
+   	if(gammaID==0)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
+	}
+	else if(gammaID==1)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma1");
+	}
+	else if(gammaID==2)
+	{
+	dtree = (TTree*)fdin->Get("Tree_Optim_gamma2");
+	}
+    } 
+  }
+  
   //selection cuts for testing
 //  TCut selcut = "(STr2_enG1_true/cosh(STr2_Eta_1)>1.0) && (STr2_S4S9_1>0.75)";
   //TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2)";
+  TCut selcut = "(STr2_isMerging < 2)";
 
 /*  
 TCut selcut;
@@ -250,180 +260,112 @@ TCut selcut;
 
   TCut Events01_4 = "(Entry$%4<2)";
   TCut Events23_4 = "(Entry$%4>1)";
-
-   
-  TCut selcut_gamma1 = "1";
-  TCut selcut_gamma2 = "1";
  
-    weightvar_gamma1.SetTitle(selcut_gamma1);
-    weightvar_gamma2.SetTitle(selcut_gamma2);
+  if (doele) 
+    weightvar.SetTitle(prescale100alt*selcut);
+  else
+    weightvar.SetTitle(selcut);
   
-  cout<<"DEBUG ----0002"<<endl;
-  cout<<"dtree: "<<dtree->GetEntries()<<endl;
   //make testing dataset
+  RooDataSet *hdata = RooTreeConvert::CreateDataSet("hdata",dtree,vars,weightvar);   
 
-  RooDataSet *hdata_gamma1 = RooTreeConvert::CreateDataSet("hdata_gamma1",dtree,vars_gamma1,weightvar_gamma1);   
-  RooDataSet *hdata_gamma2 = RooTreeConvert::CreateDataSet("hdata_gamma2",dtree,vars_gamma2,weightvar_gamma2);   
-  cout<<"DEBUG ----0003"<<endl;
-
+  if (doele) 
+    weightvar.SetTitle(prescale1000alt*selcut);
+  else
+    weightvar.SetTitle(prescale10alt*selcut);
+  //make reduced testing dataset for integration over conditional variables
+  RooDataSet *hdatasmall = RooTreeConvert::CreateDataSet("hdatasmall",dtree,vars,weightvar);     
+    
   //retrieve full pdf from workspace
-  RooAbsPdf *sigpdf_gamma1 = ws_gamma1->pdf("sigpdf");
+  RooAbsPdf *sigpdf = ws->pdf("sigpdf");
   
   //input variable corresponding to sceta
   //
-  RooRealVar *abs_erawvar_gamma1 = ws_gamma1->var("var_0");
-  RooRealVar *S4S9var_gamma1 = ws_gamma1->var("var_2");
+  RooRealVar *abs_erawvar = ws->var("var_0");
+  RooRealVar *S4S9var = ws->var("var_4");
   
+  RooRealVar *scetavar = ws->var("var_1");
+  RooRealVar *scphivar = ws->var("var_2");
   
-  RooRealVar *scetaiXvar_gamma1 = ws_gamma1->var("var_4");
-  RooRealVar *scphiiYvar_gamma1 = ws_gamma1->var("var_5");
-//  RooRealVar *EOverEOthervar = ws->var("var_10");
-  
-  //regressed output functions
-  RooAbsReal *sigmeanlim_gamma1 = ws_gamma1->function("sigmeanlim");
-  RooAbsReal *sigwidthlim_gamma1 = ws_gamma1->function("sigwidthlim");
-  RooAbsReal *signlim_gamma1 = ws_gamma1->function("signlim");
-  RooAbsReal *sign2lim_gamma1 = ws_gamma1->function("sign2lim");
-  //cout<<"Function of sigmeanlim:  "<<sigmeanlim->getTitle()<<endl;
-
-  //formula for corrected energy/true energy ( 1.0/(etrue/eraw) * regression mean)
-  RooFormulaVar ecor_gamma1("ecor_gamma1","","1./(@0)*@1",RooArgList(*tgtvar_gamma1,*sigmeanlim_gamma1));
-  RooRealVar *ecorvar_gamma1 = (RooRealVar*)hdata_gamma1->addColumn(ecor_gamma1);
-  ecorvar_gamma1->setRange(0.,2.);
-  ecorvar_gamma1->setBins(800);
-  
-  RooFormulaVar abs_ecor_gamma1("abs_ecor_gamma1","","1.*@0*@1",RooArgList(*abs_erawvar_gamma1,*sigmeanlim_gamma1));
-  RooRealVar *abs_ecorvar_gamma1 = (RooRealVar*)hdata_gamma1->addColumn(abs_ecor_gamma1);
-
-  //formula for raw energy/true energy (1.0/(etrue/eraw))
-  RooFormulaVar raw_gamma1("raw_gamma1","","1./@0",RooArgList(*tgtvar_gamma1));
-  RooRealVar *rawvar_gamma1 = (RooRealVar*)hdata_gamma1->addColumn(raw_gamma1);
-  rawvar_gamma1->setRange(0.,2.);
-  rawvar_gamma1->setBins(800);
-
-   //retrieve full pdf from workspace
-  RooAbsPdf *sigpdf_gamma2 = ws_gamma2->pdf("sigpdf");
-  
-  //input variable corresponding to sceta
-  //
-  RooRealVar *abs_erawvar_gamma2 = ws_gamma2->var("var_0");
-  RooRealVar *S4S9var_gamma2 = ws_gamma2->var("var_2");
-  
-  
-  RooRealVar *scetaiXvar_gamma2 = ws_gamma2->var("var_4");
-  RooRealVar *scphiiYvar_gamma2 = ws_gamma2->var("var_5");
-//  RooRealVar *EOverEOthervar = ws->var("var_10");
+  RooRealVar *scetaiXvar = ws->var("var_6");
+  RooRealVar *scphiiYvar = ws->var("var_7");
   
   //regressed output functions
-  RooAbsReal *sigmeanlim_gamma2 = ws_gamma2->function("sigmeanlim");
-  RooAbsReal *sigwidthlim_gamma2 = ws_gamma2->function("sigwidthlim");
-  RooAbsReal *signlim_gamma2 = ws_gamma2->function("signlim");
-  RooAbsReal *sign2lim_gamma2 = ws_gamma2->function("sign2lim");
+  RooAbsReal *sigmeanlim = ws->function("sigmeanlim");
+  RooAbsReal *sigwidthlim = ws->function("sigwidthlim");
+  RooAbsReal *signlim = ws->function("signlim");
+  RooAbsReal *sign2lim = ws->function("sign2lim");
   //cout<<"Function of sigmeanlim:  "<<sigmeanlim->getTitle()<<endl;
 
 
   //formula for corrected energy/true energy ( 1.0/(etrue/eraw) * regression mean)
-  RooFormulaVar ecor_gamma2("ecor_gamma2","","1./(@0)*@1",RooArgList(*tgtvar_gamma2,*sigmeanlim_gamma2));
-  RooRealVar *ecorvar_gamma2 = (RooRealVar*)hdata_gamma2->addColumn(ecor_gamma2);
-  ecorvar_gamma2->setRange(0.,2.);
-  ecorvar_gamma2->setBins(800);
+  RooFormulaVar ecor("ecor","","1./(@0)*@1",RooArgList(*tgtvar,*sigmeanlim));
+  RooRealVar *ecorvar = (RooRealVar*)hdata->addColumn(ecor);
+  ecorvar->setRange(0.,2.);
+  ecorvar->setBins(800);
   
-  RooFormulaVar abs_ecor_gamma2("abs_ecor_gamma2","","1.*@0*@1",RooArgList(*abs_erawvar_gamma2,*sigmeanlim_gamma2));
-  RooRealVar *abs_ecorvar_gamma2 = (RooRealVar*)hdata_gamma2->addColumn(abs_ecor_gamma2);
+  RooFormulaVar abs_ecor("abs_ecor","","1.*@0*@1",RooArgList(*abs_erawvar,*sigmeanlim));
+  RooRealVar *abs_ecorvar = (RooRealVar*)hdata->addColumn(abs_ecor);
 
   //formula for raw energy/true energy (1.0/(etrue/eraw))
-  RooFormulaVar raw_gamma2("raw_gamma2","","1./@0",RooArgList(*tgtvar_gamma2));
-  RooRealVar *rawvar_gamma2 = (RooRealVar*)hdata_gamma2->addColumn(raw_gamma2);
-  rawvar_gamma2->setRange(0.,2.);
-  rawvar_gamma2->setBins(800);
+  RooFormulaVar raw("raw","","1./@0",RooArgList(*tgtvar));
+  RooRealVar *rawvar = (RooRealVar*)hdata->addColumn(raw);
+  rawvar->setRange(0.,2.);
+  rawvar->setBins(800);
 
-
+  //clone data and add regression outputs for plotting
+  RooDataSet *hdataclone = new RooDataSet(*hdata,"hdataclone");
+  RooRealVar *meanvar = (RooRealVar*)hdataclone->addColumn(*sigmeanlim);
+  RooRealVar *widthvar = (RooRealVar*)hdataclone->addColumn(*sigwidthlim);
+  RooRealVar *nvar = (RooRealVar*)hdataclone->addColumn(*signlim);
+  RooRealVar *n2var = (RooRealVar*)hdataclone->addColumn(*sign2lim);
+  
   TH2F *h2_g1g2_raw = new TH2F("h2_g1g2_raw","h2_g1g2_raw",100,0.75,1.15,100,0.75,1.15); 
   TH2F *h2_g1g2_cor = new TH2F("h2_g1g2_cor","h2_g1g2_cor",100,0.8,1.2,100,0.8,1.2); 
 
 //get pi0 mass peak from the data
 	TH1F *hraw_pi0_mass = new TH1F("raw_m_pi0", "raw_m_pi0", 800,0.0,0.26);
 	TH1F *hcor_pi0_mass = new TH1F("cor_m_pi0", "cor_m_pi0", 800,0.0,0.26);
-	const RooArgSet* set_gamma1;
-	const RooArgSet* set_gamma2;
-    	int entries=hdata_gamma1->numEntries();
-	double eta_val[2], ErawOverEtrue[2], EcorOverEtrue[2],ieta_val[2], phi_val[2], eraw_val[2], ecor_val[2], S4S9_val[2], DeltaR_val[2], massraw_pi0, masscor_pi0, EOverEOther_val[2], Nxtal_val[2], ptPi0_val[2];
+	const RooArgSet* set;
+    	int entries=hdata->numEntries();
+	double eta_val[2], ErawOverEtrue[2], EcorOverEtrue[2],ieta_val[2], phi_val[2], eraw_val[2], ecor_val[2], S4S9_val[2], DeltaR_val[2], massraw_pi0, masscor_pi0;
 	cout<<"Total number of photons: "<<entries<<endl;
 	bool passCut[2] = {false,false};
  	for(int i=0;i<entries;i++)
 	{
-		set_gamma1 = hdata_gamma1->get(i);
-		S4S9var_gamma1 = (RooRealVar*)set_gamma1->find(S4S9var_gamma1->GetName());
-		scetavar_gamma1 = (RooRealVar*)set_gamma1->find(scetavar_gamma1->GetName());
-		scptPi0var_gamma1 = (RooRealVar*)set_gamma1->find(scptPi0var_gamma1->GetName());
-		scNxtalvar_gamma1 = (RooRealVar*)set_gamma1->find(scNxtalvar_gamma1->GetName());
-		scetaiXvar_gamma1 = (RooRealVar*)set_gamma1->find(scetaiXvar_gamma1->GetName());
-		scphivar_gamma1 = (RooRealVar*)set_gamma1->find(scphivar_gamma1->GetName());
-		abs_erawvar_gamma1 = (RooRealVar*)set_gamma1->find(abs_erawvar_gamma1->GetName());
-		abs_ecorvar_gamma1 = (RooRealVar*)set_gamma1->find(abs_ecorvar_gamma1->GetName());
-		ecorvar_gamma1 = (RooRealVar*)set_gamma1->find(ecorvar_gamma1->GetName());
-		tgtvar_gamma1 = (RooRealVar*)set_gamma1->find(tgtvar_gamma1->GetName());
+		set = hdata->get(i);
+		S4S9var = (RooRealVar*)set->find(S4S9var->GetName());
+		DeltaRvar = (RooRealVar*)set->find(DeltaRvar->GetName());
+		scetavar = (RooRealVar*)set->find(scetavar->GetName());
+		scetaiXvar = (RooRealVar*)set->find(scetaiXvar->GetName());
+		scphivar = (RooRealVar*)set->find(scphivar->GetName());
+		abs_erawvar = (RooRealVar*)set->find(abs_erawvar->GetName());
+		abs_ecorvar = (RooRealVar*)set->find(abs_ecorvar->GetName());
+		ecorvar = (RooRealVar*)set->find(ecorvar->GetName());
+		tgtvar = (RooRealVar*)set->find(tgtvar->GetName());
 
-		set_gamma2 = hdata_gamma2->get(i);
-		S4S9var_gamma2 = (RooRealVar*)set_gamma2->find(S4S9var_gamma2->GetName());
-		scetavar_gamma2 = (RooRealVar*)set_gamma2->find(scetavar_gamma2->GetName());
-		scptPi0var_gamma2 = (RooRealVar*)set_gamma2->find(scptPi0var_gamma2->GetName());
-		scNxtalvar_gamma2 = (RooRealVar*)set_gamma2->find(scNxtalvar_gamma2->GetName());
-		scetaiXvar_gamma2 = (RooRealVar*)set_gamma2->find(scetaiXvar_gamma2->GetName());
-		scphivar_gamma2 = (RooRealVar*)set_gamma2->find(scphivar_gamma2->GetName());
-		abs_erawvar_gamma2 = (RooRealVar*)set_gamma2->find(abs_erawvar_gamma2->GetName());
-		abs_ecorvar_gamma2 = (RooRealVar*)set_gamma2->find(abs_ecorvar_gamma2->GetName());
-		ecorvar_gamma2 = (RooRealVar*)set_gamma2->find(ecorvar_gamma2->GetName());
-		tgtvar_gamma2 = (RooRealVar*)set_gamma2->find(tgtvar_gamma2->GetName());
-
-		if(i%2==0)
+		if (tgtvar->getVal()>0.0001)
 		{
-			if (tgtvar_gamma1->getVal()>0.0001)
-			{
-				ErawOverEtrue[i%2] = 1./(tgtvar_gamma1->getVal());
-			}
-			else
-			{
-				ErawOverEtrue[i%2] = 999.;
-			}
-
-			EcorOverEtrue[i%2] = ecorvar_gamma1->getVal();
-			S4S9_val[i%2] = S4S9var_gamma1->getVal();
-			eta_val[i%2] = scetavar_gamma1->getVal();
-			Nxtal_val[i%2] = scNxtalvar_gamma1->getVal();
-			ptPi0_val[i%2] = scptPi0var_gamma1->getVal();
-			ieta_val[i%2] = scetaiXvar_gamma1->getVal();
-			phi_val[i%2] = scphivar_gamma1->getVal();
-			eraw_val[i%2] = abs_erawvar_gamma1->getVal();
-			ecor_val[i%2] = abs_ecorvar_gamma1->getVal();
+			ErawOverEtrue[i%2] = 1./(tgtvar->getVal());
 		}
 		else
 		{
-			if (tgtvar_gamma2->getVal()>0.0001)
-			{
-				ErawOverEtrue[i%2] = 1./(tgtvar_gamma2->getVal());
-			}
-			else
-			{
-				ErawOverEtrue[i%2] = 999.;
-			}
-
-			EcorOverEtrue[i%2] = ecorvar_gamma2->getVal();
-			S4S9_val[i%2] = S4S9var_gamma2->getVal();
-			eta_val[i%2] = scetavar_gamma2->getVal();
-			Nxtal_val[i%2] = scNxtalvar_gamma2->getVal();
-			ptPi0_val[i%2] = scptPi0var_gamma2->getVal();
-			ieta_val[i%2] = scetaiXvar_gamma2->getVal();
-			phi_val[i%2] = scphivar_gamma2->getVal();
-			eraw_val[i%2] = abs_erawvar_gamma2->getVal();
-			ecor_val[i%2] = abs_ecorvar_gamma2->getVal();
+			ErawOverEtrue[i%2] = 999.;
 		}
+		EcorOverEtrue[i%2] = ecorvar->getVal();
 
-		if((eraw_val[i%2]/cosh(eta_val[i%2])>1.0)&&(S4S9_val[i%2]>0.75) && Nxtal_val[i%2]>6.5 && ptPi0_val[i%2]>2.0)
+		S4S9_val[i%2] = S4S9var->getVal();
+		DeltaR_val[i%2] = DeltaRvar->getVal();
+		eta_val[i%2] = scetavar->getVal();
+		ieta_val[i%2] = scetaiXvar->getVal();
+		phi_val[i%2] = scphivar->getVal();
+		eraw_val[i%2] = abs_erawvar->getVal();
+		ecor_val[i%2] = abs_ecorvar->getVal();
+		//if((eraw_val[i%2]/cosh(eta_val[i%2])>1.0)&&(S4S9_val[i%2]>0.75)&&(DeltaR_val[i%2]<0.03))
+		//if((eraw_val[i%2]/cosh(eta_val[i%2])>1.0)&&(S4S9_val[i%2]>0.75)&&(DeltaR_val[i%2]<0.03)&&(abs(ieta_val[i%2])<60))
+		if((eraw_val[i%2]/cosh(eta_val[i%2])>1.0)&&(S4S9_val[i%2]>0.75)&&(DeltaR_val[i%2]<0.03))
 		{
 			passCut[i%2] = true;
-			if(dobarrel && abs(eta_val[i%2])>1.479) passCut[i%2] = false;
-			if((!dobarrel) && abs(eta_val[i%2])<1.479) passCut[i%2] = false;
 		}
 		else
 		{
@@ -433,7 +375,7 @@ TCut selcut;
 		{
 			massraw_pi0 = sqrt(2*eraw_val[0]*eraw_val[1]*(cosh(eta_val[0]-eta_val[1])-cos(phi_val[0]-phi_val[1]))/(cosh(eta_val[0])*cosh(eta_val[1])));
 			masscor_pi0 = sqrt(2*ecor_val[0]*ecor_val[1]*(cosh(eta_val[0]-eta_val[1])-cos(phi_val[0]-phi_val[1]))/(cosh(eta_val[0])*cosh(eta_val[1])));
-		//	cout<<i<<"  eraw: "<<eraw_val[0]<<"  "<<eraw_val[1]<<"   ecor: "<<ecor_val[0]<<"  "<<ecor_val[1]<<"   eta: "<<eta_val[0]<<"   "<<eta_val[1]<<"   phi: "<<phi_val[0]<<"   "<<phi_val[1]    <<"   massraw: "<<massraw_pi0<<"   masscor: "<<masscor_pi0<<endl;
+	//		cout<<i<<"  eraw: "<<eraw_val[0]<<"  "<<eraw_val[1]<<"   ecor: "<<ecor_val[0]<<"  "<<ecor_val[1]<<"   eta: "<<eta_val[0]<<"   "<<eta_val[1]<<"   phi: "<<phi_val[0]<<"   "<<phi_val[1]    <<"   massraw: "<<massraw_pi0<<"   masscor: "<<masscor_pi0<<endl;
 			hraw_pi0_mass->Fill(massraw_pi0);
 			hcor_pi0_mass->Fill(masscor_pi0);
 			h2_g1g2_raw->Fill(ErawOverEtrue[0],ErawOverEtrue[1]);
@@ -491,6 +433,7 @@ TCut selcut;
   cpi0mass->SaveAs("mpi0log.pdf");
   cpi0mass->SaveAs("mpi0log.png");
 
+
   TCanvas *myC_EoverEtrue = new TCanvas;
   gStyle->SetOptStat(0);
   h2_g1g2_raw->GetXaxis()->SetTitle("E_{raw}/E_{true} of #gamma_{1}");
@@ -512,6 +455,7 @@ TCut selcut;
   myC_EoverEtrue->SaveAs("EcorOverEtrue_gamma1_vs_gamma2.pdf");
   myC_EoverEtrue->SaveAs("EcorOverEtrue_gamma1_vs_gamma2.png");
   myC_EoverEtrue->SaveAs("EcorOverEtrue_gamma1_vs_gamma2.C");
+
 
 
 /* 

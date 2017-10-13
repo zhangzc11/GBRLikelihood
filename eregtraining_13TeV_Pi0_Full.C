@@ -75,18 +75,18 @@ void initweights(TChain *chain, float *xsecs, float lumi) {
   
 }
 
-void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0) {
+void eregtraining_13TeV_Pi0_Full(bool dobarrel=true, bool doele=false, int gammaID=0) {
   //gammaID = 0(both gamma), 1(gamma1), 2(gamma2) 
   //output dir
   //TString dirname = "/data/bendavid/eregexampletest/"; 
-  TString dirname = "ereg_ws_Pi0/bothGammas/";
+  TString dirname = "ereg_ws_Full/bothGammas/";
   if(gammaID == 1)
   {
-	dirname = "ereg_ws_Pi0/gamma1/";
+	dirname = "ereg_ws_Full/gamma1/";
   }
   else if (gammaID ==2)
   {
-	dirname = "ereg_ws_Pi0/gamma2/";
+	dirname = "ereg_ws_Full/gamma2/";
   }
   gSystem->mkdir(dirname,true);
   gSystem->cd(dirname);  
@@ -133,18 +133,37 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
 	std::vector<std::string> *varsee;
    	
 	//common for EE and EB
-    	varsf->push_back("STr2_enG_rec");
-	varsf->push_back("STr2_Nxtal");
+    	varsf->push_back("STr2_enG_nocor");// /cosh(STr2_Eta_1)");
+ 	varsf->push_back("STr2_Eta");
+        varsf->push_back("STr2_Phi");
+	   
+	varsf->push_back("STr2_Nxtal");//number of crystals receive a certain portion(?) of energy
+    	
     	varsf->push_back("STr2_S4S9");
+//   	varsf->push_back("STr2_S1S9");
    	varsf->push_back("STr2_S2S9");
+    	varsf->push_back("STr2_DeltaR");
+
 	varsf->push_back("STr2_iEtaiX");
         varsf->push_back("STr2_iPhiiY");
+	
+
         varseb = new std::vector<std::string>(*varsf);
         varsee = new std::vector<std::string>(*varsf);
-        //EB only
-	varseb->push_back("STr2_SM_dist");
-	varseb->push_back("STr2_M_dist");
-	//varseb->push_back("STr2_DeltaRG1G2");
+        //EE
+	//varsee->push_back("STr2_iEtaiX");
+   	//varsee->push_back("STr2_iPhiiY");
+	//varsee->push_back("STr2_Eta");
+	varsee->push_back("STr2_Es_e1");//the gamma energy in the first layer of the preshower
+    	varsee->push_back("STr2_Es_e2");//the gamma energy in the second layer of the preshower
+   	//EB
+	//varseb->push_back("STr2_Eta");
+   	//varseb->push_back("STr2_Phi");
+	
+	varseb->push_back("STr2_iEta_on5");
+   	varseb->push_back("STr2_iPhi_on2");
+   	varseb->push_back("STr2_iPhi_on20");
+   	varseb->push_back("STr2_iEta_on2520");
   	
 
 //  varseb->push_back("ph.e5x5seed/ph.eseed");
@@ -180,7 +199,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   RooArgList condvars(vars);
   
   //create RooRealVar for target
-  RooRealVar *tgtvar = new RooRealVar("tgtvar","STr2_enG_true/STr2_enG_rec",1.);//("tgtvar","ph.gene/ph.scrawe",1.);
+  RooRealVar *tgtvar = new RooRealVar("tgtvar","STr2_enG_true/STr2_enG_nocor",1.);//("tgtvar","ph.gene/ph.scrawe",1.);
  // if (!dobarrel) tgtvar->SetTitle("ph.gene/(ph.scrawe + ph.scpse)");  
   
   //add target to full list
@@ -232,13 +251,14 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
     {
     tree = new TChain("Tree_Optim_gamma2");
     }
-    
+    if(dobarrel)
     {
-    //tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/ND/PU_Spring16_EB_NoCut3_combine_train.root");      
-    //tree->Add("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_0_half1.root");      
-    tree->Add("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_20171008_half1.root");      
-    //tree->Add("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiEta_FlatPt-1To15/Gun_FlatPt1to15_MultiEta_withPhotonPtFilter_pythia8/photons_22Aug2017_V3_half1.root");      
+    tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/Gun_Pi0_Pt1To15_FlatPU0to50RAW_withHLT_80X_mcRun2_GEN-SIM-RAW_ALL_EcalNtp_ALL_EB_combine.root");      
     }
+    else
+     {
+    tree->Add("/afs/cern.ch/work/z/zhicaiz/public/ECALpro_MC_TreeForRegression/Gun_Pi0_Pt1To15_FlatPU0to50RAW_withHLT_80X_mcRun2_GEN-SIM-RAW_ALL_EcalNtp_ALL_EE_combine.root");      
+     }
 	cout<<"DEBUG 006..."<<endl; 
     xsecs[0] = 0.001835*81930.0;
     xsecs[1] = 0.05387*8884.0;    
@@ -255,14 +275,8 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   
   //training selection cut
   ///////////////////////////////zzc, photon gen pt?
-  //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03) && (STr2_enG_true/STr2_enG_rec)<3.0 && STr2_EOverEOther < 10.0 && STr2_EOverEOther > 0.1";
-  TCut selcut = "";
-  //if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479 && (!STr2_fromPi0)";
-  if(dobarrel) selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)<1.479";
-  //else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.2) && (STr2_mPi0_nocor < 1.0) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479 && (!STr2_fromPi0)";
-  else selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_Nxtal > 6) && (STr2_mPi0_nocor>0.1) && (STr2_mPi0_nocor < 0.2) && (STr2_ptPi0_nocor > 2.0) && abs(STr2_Eta)>1.479";
-  //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03) && (STr2_enG_true/STr2_enG_rec)<3.0 ";
-  //TCut selcut = "(STr2_enG_rec/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_DeltaR < 0.03)";
+  TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_isMerging < 2) && (STr2_DeltaR < 0.03)";
+  //TCut selcut = "(STr2_enG_nocor/cosh(STr2_Eta)>1.0) && (STr2_S4S9 > 0.75) && (STr2_DeltaR < 0.03)";
 /*
   if (dobarrel) {
     selcut = "ph.genpt>0.5 && ph.isbarrel && ph.ispromptgen"; 
@@ -290,10 +304,10 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   TCut Events01_4 = "(Entry$%4<2)";
   TCut Events23_4 = "(Entry$%4>1)";
 
-  TCut EventsTrain = "(Entry$%2==0)";
+  TCut EventsTrain = "(Entry$<9000000)";
   
-//  weightvar.SetTitle(EventsTrain*selcut);
   weightvar.SetTitle(selcut);
+//  weightvar.SetTitle(selcut);
 
   //weightvar title used for per-event weights and selection cuts
 /////////////////////////////////zzc, no evt in current tree//////////
@@ -324,33 +338,17 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   RooRealVar sign2var("sign2var","",3.);
   sign2var.setConstant(false);     
 
-/*
-  RooRealVar sigalphavar("sigalphavar","",2.);
-  sigalphavar.setConstant(false);       
-  
-  RooRealVar sigalpha2var("sigalpha2var","",1.);
-  sigalpha2var.setConstant(false);     
-*/
-
   //define non-parametric functions for each regressed parameter
   RooGBRFunctionFlex *sigwidthtfunc = new RooGBRFunctionFlex("sigwidthtfunc","");
   RooGBRFunctionFlex *sigmeantfunc = new RooGBRFunctionFlex("sigmeantfunc","");
   RooGBRFunctionFlex *signfunc = new RooGBRFunctionFlex("signfunc","");
   RooGBRFunctionFlex *sign2func = new RooGBRFunctionFlex("sign2func","");
 
-//  RooGBRFunctionFlex *sigalphafunc = new RooGBRFunctionFlex("sigalphafunc","");
-//  RooGBRFunctionFlex *sigalpha2func = new RooGBRFunctionFlex("sigalpha2func","");
-
-
-
   //define mapping of input variables to non-parametric functions (in this case trivial since all 4 functions depend on the same inputs, but this is not a requirement)
   RooGBRTargetFlex *sigwidtht = new RooGBRTargetFlex("sigwidtht","",*sigwidthtfunc,sigwidthtvar,condvars);  
   RooGBRTargetFlex *sigmeant = new RooGBRTargetFlex("sigmeant","",*sigmeantfunc,sigmeantvar,condvars);  
   RooGBRTargetFlex *signt = new RooGBRTargetFlex("signt","",*signfunc,signvar,condvars);  
   RooGBRTargetFlex *sign2t = new RooGBRTargetFlex("sign2t","",*sign2func,sign2var,condvars);  
-
-//  RooGBRTargetFlex *sigalphat = new RooGBRTargetFlex("sigalphat","",*sigalphafunc,sigalphavar,condvars);  
-//  RooGBRTargetFlex *sigalpha2t = new RooGBRTargetFlex("sigalpha2t","",*sigalpha2func,sigalpha2var,condvars);  
 
   //define list of mapped functions to regress
   RooArgList tgts;
@@ -359,26 +357,17 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   tgts.add(*signt);
   tgts.add(*sign2t);  
   
-//  tgts.add(*sigalphat);
-//  tgts.add(*sigalpha2t);  
-  
   //define transformations corresponding to parameter bounds for non-parametric outputs  
   RooRealConstraint sigwidthlim("sigwidthlim","",*sigwidtht,0.0002,0.5);
   RooRealConstraint sigmeanlim("sigmeanlim","",*sigmeant,0.2,2.0);
   RooRealConstraint signlim("signlim","",*signt,1.01,5000.); 
   RooRealConstraint sign2lim("sign2lim","",*sign2t,1.01,5000.); 
 
-//  RooRealConstraint sigalphalim("sigalphalim","",*sigalphat,0.01,10.); 
-//  RooRealConstraint sigalpha2lim("sigalpha2lim","",*sigalpha2t,0.01,10.); 
-
-
   //define pdf, which depends on transformed outputs (and is intended to be treated as a conditional pdf over the
   //regression inputs in this case)
   //The actual pdf below is a double crystal ball, with crossover points alpha_1 and alpha_2 set constant, but all other
   //parameters regressed
-  
   RooDoubleCBFast sigpdf("sigpdf","",*tgtvar,sigmeanlim,sigwidthlim,RooConst(2.),signlim,RooConst(1.),sign2lim);
-  //RooDoubleCBFast sigpdf("sigpdf","",*tgtvar,sigmeanlim,sigwidthlim,sigalphalim,signlim,sigalpha2lim,sign2lim);
   
   //dummy variable
   RooConstVar etermconst("etermconst","",0.);  
@@ -396,7 +385,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   vdata.push_back(hdata);     
   
   //define minimum event weight per tree node
-  double minweight = 100;
+  double minweight = 200;
   std::vector<double> minweights;
   minweights.push_back(minweight);
   
@@ -408,7 +397,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
   if (1) {
     RooHybridBDTAutoPdf bdtpdfdiff("bdtpdfdiff","",tgts,etermconst,r,vdata,vpdf);
 	cout<<"DEBUG 012.1..."<<endl; 
-    bdtpdfdiff.SetMinCutSignificance(3.);
+    bdtpdfdiff.SetMinCutSignificance(2.);
 	cout<<"DEBUG 012.2..."<<endl; 
     //bdtpdfdiff.SetPrescaleInit(100);
     bdtpdfdiff.SetShrinkage(0.1);
@@ -417,7 +406,7 @@ void eregtraining_13TeV_Pi0(bool dobarrel=true, bool doele=false, int gammaID=0)
 	cout<<"DEBUG 012.4..."<<endl; 
     bdtpdfdiff.SetMaxNodes(750);
 	cout<<"DEBUG 012.5..."<<endl; 
-    bdtpdfdiff.TrainForest(1e6);   
+    bdtpdfdiff.TrainForest(1e6);//(1e6);   
 	cout<<"DEBUG 012.6..."<<endl; 
   }
      

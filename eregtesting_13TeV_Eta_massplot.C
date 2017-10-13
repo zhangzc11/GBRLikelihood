@@ -132,7 +132,7 @@ Double_t effSigma(TH1 * hist)
   
 }
 
-void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
+void eregtesting_13TeV_Eta_massplot(bool dobarrel=true, bool doele=false) {
   
   cout<<"DEBUG ----0000.1"<<endl;
   //output dir
@@ -146,7 +146,7 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
   TString gamma1Dir = "gamma1";
   TString gamma2Dir = "gamma2";
 
-  TString dirname = TString::Format("ereg_test_plots_trainetatestpi0/%s_%s",gammaDir.Data(),EEorEB.Data());
+  TString dirname = TString::Format("ereg_test_plots_trainpi0testeta/%s_%s",gammaDir.Data(),EEorEB.Data());
 
   
   gSystem->mkdir(dirname,true);
@@ -163,8 +163,8 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
   else if (!doele && !dobarrel) 
     fname = "wereg_ph_ee.root";
   
-  TString infile_gamma1 = TString::Format("../../ereg_ws_Eta/%s/%s",gamma1Dir.Data(),fname.Data());
-  TString infile_gamma2 = TString::Format("../../ereg_ws_Eta/%s/%s",gamma2Dir.Data(),fname.Data());
+  TString infile_gamma1 = TString::Format("../../ereg_ws_Pi0/%s/%s",gamma1Dir.Data(),fname.Data());
+  TString infile_gamma2 = TString::Format("../../ereg_ws_Pi0/%s/%s",gamma2Dir.Data(),fname.Data());
   
   TFile *fws_gamma1 = TFile::Open(infile_gamma1); 
   TFile *fws_gamma2 = TFile::Open(infile_gamma2); 
@@ -214,7 +214,8 @@ void eregtesting_13TeV_Pi0_massplot(bool dobarrel=true, bool doele=false) {
   TTree *dtree;
   
   //TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_0_half2.root"); 
-  TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiPion_FlatPt-1To15/Gun_FlatPt1to15_MultiPion_withPhotonPtFilter_pythia8/photons_20171008_half2.root"); 
+  //TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiEta_FlatPt-1To15/Gun_FlatPt1to15_MultiEta_withPhotonPtFilter_pythia8/photons_22Aug2017_V3_half2.root"); 
+  TFile *fdin = TFile::Open("/eos/cms/store/group/dpg_ecal/alca_ecalcalib/piZero2017/zhicaiz/Gun_MultiEta_FlatPt-1To15/Gun_FlatPt1to15_MultiEtaToGG_withPhotonPtFilter_pythia8/photons_20171008_half2.root");
 	dtree = (TTree*)fdin->Get("Tree_Optim_gamma");
  
 
@@ -252,8 +253,8 @@ TCut selcut;
   TCut Events23_4 = "(Entry$%4>1)";
 
    
-  TCut selcut_gamma1 = "1";
-  TCut selcut_gamma2 = "1";
+  TCut selcut_gamma1 = "(!STr2_fromPi0)";
+  TCut selcut_gamma2 = "(!STr2_fromPi0)";
  
     weightvar_gamma1.SetTitle(selcut_gamma1);
     weightvar_gamma2.SetTitle(selcut_gamma2);
@@ -342,8 +343,8 @@ TCut selcut;
   TH2F *h2_g1g2_cor = new TH2F("h2_g1g2_cor","h2_g1g2_cor",100,0.8,1.2,100,0.8,1.2); 
 
 //get pi0 mass peak from the data
-	TH1F *hraw_pi0_mass = new TH1F("raw_m_pi0", "raw_m_pi0", 800,0.0,0.26);
-	TH1F *hcor_pi0_mass = new TH1F("cor_m_pi0", "cor_m_pi0", 800,0.0,0.26);
+	TH1F *hraw_pi0_mass = new TH1F("raw_m_pi0", "raw_m_pi0", 800,0.0,1.0);
+	TH1F *hcor_pi0_mass = new TH1F("cor_m_pi0", "cor_m_pi0", 800,0.0,1.0);
 	const RooArgSet* set_gamma1;
 	const RooArgSet* set_gamma2;
     	int entries=hdata_gamma1->numEntries();
@@ -445,8 +446,8 @@ TCut selcut;
 
   if(EEorEB == "EE")
   {
-	hraw_pi0_mass->SetBins(200,0.0,0.26);
-	hcor_pi0_mass->SetBins(200,0.0,0.26);
+	hraw_pi0_mass->SetBins(200,0.0,1.0);
+	hcor_pi0_mass->SetBins(200,0.0,1.0);
   }
 
   effsigma_mpi0_cor = effSigma(hcor_pi0_mass);
@@ -456,14 +457,14 @@ TCut selcut;
 
 
 //draw pi0 mass peak
-	TH1F *h_theoretical = new TH1F("theo","theo",260000,0.0,0.26);
-	h_theoretical->SetBinContent(134978,1.05*hcor_pi0_mass->GetMaximum());
+	TH1F *h_theoretical = new TH1F("theo","theo",1000000,0.0,1.0);
+	h_theoretical->SetBinContent(547862,1.05*hcor_pi0_mass->GetMaximum());
 
   hcor_pi0_mass->SetLineColor(kBlue);
   hraw_pi0_mass->SetLineColor(kMagenta);
   h_theoretical->SetLineColor(kBlack);
   
-  hcor_pi0_mass->GetXaxis()->SetTitle("m_{#pi_{0}}/GeV");
+  hcor_pi0_mass->GetXaxis()->SetTitle("m_{#eta}/GeV");
   hcor_pi0_mass->GetYaxis()->SetRangeUser(1.0,1.4*hcor_pi0_mass->GetMaximum());
   hraw_pi0_mass->GetYaxis()->SetRangeUser(1.0,1.4*hcor_pi0_mass->GetMaximum());
 
@@ -479,7 +480,7 @@ TCut selcut;
   TLegend *leg_mpi0 = new TLegend(0.1, 0.74, 0.7, 0.9);
   leg_mpi0->AddEntry(hcor_pi0_mass,Form("m_{#pi_{0}, cor}, #sigma_{eff}=%4.3f, FWHM=%4.3f", effsigma_mpi0_cor, fwhm_mpi0_cor),"l");
   leg_mpi0->AddEntry(hraw_pi0_mass,Form("m_{#pi_{0}, raw}, #sigma_{eff}=%4.3f, FWHM=%4.3f", effsigma_mpi0_raw, fwhm_mpi0_raw),"l");
-  leg_mpi0->AddEntry(h_theoretical,"m_{#pi_{0}} from PDG (0.135 GeV)","l");
+  leg_mpi0->AddEntry(h_theoretical,"m_{#eta} from PDG (0.548 GeV)","l");
 
   leg_mpi0->SetFillStyle(0);
   leg_mpi0->SetBorderSize(0);
